@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Proyectoo-Experiencias</string>
+
+    <string name="labelUsuario">Ingresa tu Usuario</string>
+    <string name="labelContrasenia">Ingresa tu Contraseña</string>
+    <string name="labelNombreAnimal">Ingresa Nombre del Animal</string>
+    <string name="labelNombresDueño">Ingresa Nombre del Dueño</string>
+    <string name="labelEdadAnimal">Ingresa Edad</string>
+    <string name="labelPesoAnimal">Ingresa Peso</string>
+    <string name="labelInformacionAnimal">Ingresa Datos del Animal</string>
+    <string name="labelGeneroAnimal">Ingresa Genero del Animal</string>
+    <string name="labelTipoAnimal">Ingresa Tipo de Animal</string>
+    <string-array name="simple_items">
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+    <string-array name="tipo_items">
+        <item>Gato</item>
+        <item>Perro</item>
+        <item>Uron</item>
+    </string-array>
+    //Clientes
+    <string name="labelNombreClientes">Ingresa Nombre del Cliente</string>
+    <string name="labelApellidosClientes">Ingresa Apellidos del Cliente</string>
+    <string name="labelDireccionClientes">Ingresa la Direccion del Cliente</string>
+    <string name="labelDNIClientes">Ingresa el DNI del Cliente</string>
+    <string name="labelGeneroClientes">Ingresa Genero del Cliente</string>
+    <string-array name="clientes_items">
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+    //Doctores
+    <string name="labelNombreDoctor">Ingresa Nombre del Doctor</string>
+    <string name="labelApellidosDoctor">Ingresa Apellidos del Doctor</string>
+    <string name="labelDNI">Ingresa DNI del Doctor</string>
+    <string name="labelGeneroDoctor">Ingresa Genero del Doctor</string>
+
+    <string name="labelExperiencia">Ingresa Experiencia del Doctor</string>
+    <string name="labelEspecialidad">Ingresa Especialidad del Doctor</string>
+    <string-array name="item_doctores">
+        <item>Exoticos</item>
+        <item>Gatos</item>
+        <item>Perros</item>
+    </string-array>
+    <string-array name="item_experiencia">
+        <item>1 año</item>
+        <item>+4 años</item>
+        <item>+10 años</item>
+    </string-array>
+
+
+</resources>
