@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -23,22 +22,23 @@ import kotlinx.coroutines.withContext
 
 class ClienteDetalleActivity : AppCompatActivity() {
 
-    private lateinit var txtCodigoCliente:TextView
-    private lateinit var txtNombreCliente:TextView
-    private lateinit var txtClienteApellidos:TextView
-    private lateinit var txtDNICliente:TextView
-    private lateinit var txtDireccionCliente:TextView
-    private lateinit var spnGeneroCliente: AutoCompleteTextView
-    private lateinit var btnRegresarCliente:Button
-    private lateinit var btnActualizarCliente:Button
-    private lateinit var btnEliminarCliente:Button
+    private lateinit var txtCodigoCliente: TextView
+    private lateinit var txtNombreCliente: TextView
+    private lateinit var txtClienteApellidos: TextView
+    private lateinit var txtDNICliente: TextView
+    private lateinit var txtDireccionCliente: TextView
+    private lateinit var spnGeneroCliente: AutoCompleteTextView // Cambiar a AutoCompleteTextView
+    private lateinit var btnRegresarCliente: Button
+    private lateinit var btnActualizarCliente: Button
+    private lateinit var btnEliminarCliente: Button
 
     //Api
-    private lateinit var api:ApiServiceCliente
+    private lateinit var api: ApiServiceCliente
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContentView(R.layout.clientes_detalles_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -46,24 +46,24 @@ class ClienteDetalleActivity : AppCompatActivity() {
             insets
         }
 
+        // Inicializar vistas
         txtCodigoCliente = findViewById(R.id.txtCodigoClienteActualizar)
         txtNombreCliente = findViewById(R.id.txtNombreClienteActualizar)
         txtClienteApellidos = findViewById(R.id.txtClienteApellidosActualizar)
         txtDNICliente = findViewById(R.id.txtDNIClienteActualizar)
         txtDireccionCliente = findViewById(R.id.txtDireccionClienteActualizar)
-        spnGeneroCliente = findViewById(R.id.spnGeneroClienteActualizar)
-        btnRegresarCliente=findViewById(R.id.btnRegresarCliente)
+        spnGeneroCliente = findViewById(R.id.spnGeneroClienteActualizar) // Asegúrate de que el ID sea correcto
+        btnRegresarCliente = findViewById(R.id.btnRegresarCliente)
         btnActualizarCliente = findViewById(R.id.btnActualizarCliente)
         btnEliminarCliente = findViewById(R.id.btnEliminarCliente)
 
-        //Api
-
+        // Inicializar API
         api = ApiUtils.getApiCliente()
 
-        //Obtener datos del Intent
-
+        // Obtener datos del Intent
         obtenerDatos()
 
+        // Setear listeners de botones
         btnRegresarCliente.setOnClickListener {
             regresarCliente()
         }
@@ -71,17 +71,17 @@ class ClienteDetalleActivity : AppCompatActivity() {
         btnActualizarCliente.setOnClickListener {
             actualizarCliente()
         }
+
         btnEliminarCliente.setOnClickListener {
             eliminarCliente()
         }
-
     }
 
-    private fun regresarCliente(){
-        var intent= Intent(this,ListaClientesActivity::class.java)
+    private fun regresarCliente() {
+        val intent = Intent(this, ListaClientesActivity::class.java)
         startActivity(intent)
-
     }
+
     private fun obtenerDatos() {
         // Obtener datos del Intent
         val codigoCliente = intent.getIntExtra("CODIGO_CLIENTE", 0)
@@ -95,12 +95,24 @@ class ClienteDetalleActivity : AppCompatActivity() {
         txtCodigoCliente.text = codigoCliente.toString()
         txtNombreCliente.text = nombreCliente
         txtClienteApellidos.text = apellidosCliente
-        txtDNICliente.text = dniCliente.toString()
+        txtDNICliente.text = dniCliente
         txtDireccionCliente.text = informacionCliente
-        spnGeneroCliente.setText(generoCliente)
+
+        // Configurar el AutoCompleteTextView (en lugar de Spinner)
+        val opcionesGenero = resources.getStringArray(R.array.clientes_items)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesGenero)
+        spnGeneroCliente.setAdapter(adapter) // Configuramos el adaptador del AutoCompleteTextView
+
+        // Seleccionar el valor actual del género
+        val posicionGenero = opcionesGenero.indexOf(generoCliente)
+        if (posicionGenero >= 0) {
+            spnGeneroCliente.setText(generoCliente, false) // Establecer el valor seleccionado
+        } else {
+            spnGeneroCliente.setText(opcionesGenero[0], false) // Default a la primera opción si no coincide
+        }
 
         // Registro para depuración
-        Log.d("ClienteDetalleActivity", "Código: $codigoCliente, Nombre: $nombreCliente, Apellidos: $apellidosCliente")
+        Log.d("ClienteDetalleActivity", "Código: $codigoCliente, Nombre: $nombreCliente, Apellidos: $apellidosCliente, Género: $generoCliente")
     }
 
     private fun actualizarCliente() {
@@ -109,17 +121,17 @@ class ClienteDetalleActivity : AppCompatActivity() {
         val nombreCliente = txtNombreCliente.text.toString()
         val apellidosCliente = txtClienteApellidos.text.toString()
         val dniCliente = txtDNICliente.text.toString().toInt()
-        val generoCliente = spnGeneroCliente.text.toString()
+        val generoCliente = spnGeneroCliente.text.toString() // Obtener el texto seleccionado del AutoCompleteTextView
         val direccionCliente = txtDireccionCliente.text.toString()
 
         // Crear un objeto Cliente con los datos actualizados
         val clienteActualizado = Cliente(
-            codigoCliente = codigoCliente,
-            nombreCliente = nombreCliente,
-            apellidosCliente = apellidosCliente,
-            dniCliente = dniCliente,
-            generoClie = generoCliente,
-            informacionCliente = direccionCliente
+                codigoCliente = codigoCliente,
+                nombreCliente = nombreCliente,
+                apellidosCliente = apellidosCliente,
+                dniCliente = dniCliente,
+                generoClie = generoCliente,
+                informacionCliente = direccionCliente
         )
 
         // Llamar a la API para actualizar el cliente
@@ -129,6 +141,8 @@ class ClienteDetalleActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     // Actualización exitosa
                     Toast.makeText(this@ClienteDetalleActivity, "Cliente actualizado con éxito", Toast.LENGTH_SHORT).show()
+                    finish()
+                    regresarCliente()
                 } else {
                     // Manejar el error
                     Toast.makeText(this@ClienteDetalleActivity, "Error al actualizar el cliente: ${response.message()}", Toast.LENGTH_SHORT).show()
@@ -156,9 +170,4 @@ class ClienteDetalleActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
 }

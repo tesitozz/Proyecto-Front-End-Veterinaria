@@ -2,6 +2,7 @@ package com.proyecto.proyectoesfrt
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
@@ -66,6 +67,15 @@ class AnimalesDetallesActivity : AppCompatActivity() {
         // Obtener datos del Intent
         obtenerDatos()
 
+        // Establecer los adaptadores para los Spinners
+        val opcionesSexo = resources.getStringArray(R.array.simple_items) // String array de opciones
+        val adapterSexo = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesSexo)
+        spnSexo.setAdapter(adapterSexo)
+
+        val opcionesTipo = resources.getStringArray(R.array.tipo_items) // String array de opciones
+        val adapterTipo = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesTipo)
+        spnTipo.setAdapter(adapterTipo)
+
         btnActualizar.setOnClickListener {
             actualizarAnimal()
         }
@@ -81,7 +91,7 @@ class AnimalesDetallesActivity : AppCompatActivity() {
 
     private fun obtenerDatos() {
         // Suponiendo que los datos del animal se pasan a través del Intent
-        val codigoAnimal = intent.getIntExtra("CODIGO_ANIMAL", 0) // Cambiar a getIntExtra
+        val codigoAnimal = intent.getIntExtra("CODIGO_ANIMAL", 0)
         val nombreAnimal = intent.getStringExtra("NOMBRE_ANIMAL")
         val dueno = intent.getStringExtra("DUENO")
         val edad = intent.getIntExtra("EDAD", 0)
@@ -97,31 +107,28 @@ class AnimalesDetallesActivity : AppCompatActivity() {
         txtEdad.setText(edad.toString())
         txtPeso.setText(peso.toString())
         txtInformacionAnimal.setText(informacionAnimal)
+
+        // Establecer los valores del Spinner
         spnSexo.setText(sexo)
         spnTipo.setText(tipo)
     }
 
-
-
     private fun eliminarAnimal() {
         val codigoAnimal = txtCodigoAni.text.toString()
 
-        // Verificar si el campo está vacío
         if (codigoAnimal.isEmpty()) {
             Toast.makeText(this@AnimalesDetallesActivity, "Por favor, ingrese el código del animal", Toast.LENGTH_SHORT).show()
-            return // Salir de la función si el campo está vacío
+            return
         }
 
-        // Llamar a la API para eliminar el animal
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response: Response<Void> = api.eliminarAnimal(codigoAnimal.toInt())
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         Toast.makeText(this@AnimalesDetallesActivity, "Animal eliminado con éxito", Toast.LENGTH_SHORT).show()
-                        // Configurar resultado y cerrar la actividad
                         setResult(RESULT_OK)
-                        volverListado() // Cierra la actividad
+                        volverListado()
                     } else {
                         Toast.makeText(this@AnimalesDetallesActivity, "Error al eliminar el animal", Toast.LENGTH_SHORT).show()
                     }
@@ -135,54 +142,46 @@ class AnimalesDetallesActivity : AppCompatActivity() {
     }
 
     private fun actualizarAnimal() {
-        // Obtener el código del animal (debe estar en algún campo de texto, como txtCodigoAni)
         val codigoAnimal = txtCodigoAni.text.toString()
 
-        // Verificar si el código está vacío
         if (codigoAnimal.isEmpty()) {
             Toast.makeText(this, "Por favor, ingrese el código del animal", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Obtener los datos del animal de los campos de texto
         val nombreAnimal = txtNombreAnimal.text.toString()
         val dueno = txtDueno.text.toString()
-        val edad = txtEdad.text.toString().toIntOrNull() ?: 0 // Manejar la conversión
-        val peso = txtPeso.text.toString().toDoubleOrNull() ?: 0.0 // Manejar la conversión
+        val edad = txtEdad.text.toString().toIntOrNull() ?: 0
+        val peso = txtPeso.text.toString().toDoubleOrNull() ?: 0.0
         val informacionAnimal = txtInformacionAnimal.text.toString()
         val sexo = spnSexo.text.toString()
         val tipo = spnTipo.text.toString()
 
-        // Crear el objeto Animales con los datos actualizados
         val animalActualizado = Animales(
-            codigoAnimal = codigoAnimal.toInt(),
-            nombreAnimal = nombreAnimal,
-            dueno = dueno,
-            edad = edad,
-            peso = peso,
-            informacionAnimal = informacionAnimal,
-            generoAnim = sexo,
-            tipoAnimal = tipo
+                codigoAnimal = codigoAnimal.toInt(),
+                nombreAnimal = nombreAnimal,
+                dueno = dueno,
+                edad = edad,
+                peso = peso,
+                informacionAnimal = informacionAnimal,
+                generoAnim = sexo,
+                tipoAnimal = tipo
         )
 
-        // Llamar a la API para actualizar el animal
         lifecycleScope.launch {
             val response = api.actualizarAnimal(codigoAnimal.toInt(), animalActualizado)
             if (response.isSuccessful) {
                 Toast.makeText(this@AnimalesDetallesActivity, "Animal actualizado con éxito", Toast.LENGTH_SHORT).show()
-                // Redirigir a la Lista de Animales
-                finish() // Cerrar la actividad actual
+                finish()
+                volverListado()
             } else {
                 Toast.makeText(this@AnimalesDetallesActivity, "Error al actualizar el animal", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
-
-
-    private  fun volverListado(){
-        var intent= Intent(this,ListaAnimalesActivity::class.java)
+    private fun volverListado() {
+        val intent = Intent(this, ListaAnimalesActivity::class.java)
         startActivity(intent)
     }
 }

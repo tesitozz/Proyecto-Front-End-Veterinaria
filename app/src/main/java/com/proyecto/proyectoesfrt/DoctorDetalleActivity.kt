@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,9 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appproyecto.utils.ApiUtils
-import com.proyecto.proyectoesfrt.entidad.Cliente
 import com.proyecto.proyectoesfrt.entidad.Doctor
-import com.proyecto.proyectoesfrt.service.ApiServiceCliente
 import com.proyecto.proyectoesfrt.service.ApiServiceDoctores
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,18 +22,18 @@ import kotlinx.coroutines.withContext
 
 class DoctorDetalleActivity : AppCompatActivity() {
 
-    private lateinit var txtCodigoDoctorActualizar:TextView
-    private lateinit var txtNombreDoctoresActualizar:TextView
-    private lateinit var txtDoctoresApellidosActualizar:TextView
-    private lateinit var txtDNIDoctoresActualizar:TextView
-    private lateinit var spnEspecialidadDocActualizar:AutoCompleteTextView
+    private lateinit var txtCodigoDoctorActualizar: TextView
+    private lateinit var txtNombreDoctoresActualizar: TextView
+    private lateinit var txtDoctoresApellidosActualizar: TextView
+    private lateinit var txtDNIDoctoresActualizar: TextView
+    private lateinit var spnEspecialidadDocActualizar: AutoCompleteTextView
     private lateinit var spnExperienciaDocActualizar: AutoCompleteTextView
-    private lateinit var btnActualizarDoctor:Button
-    private lateinit var btnBorrarDoctor:Button
-    private lateinit var btnRegresarDoctor:Button
+    private lateinit var btnActualizarDoctor: Button
+    private lateinit var btnBorrarDoctor: Button
+    private lateinit var btnRegresarDoctor: Button
 
-    //Api
-    private lateinit var api:ApiServiceDoctores
+    // API
+    private lateinit var api: ApiServiceDoctores
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,40 +45,54 @@ class DoctorDetalleActivity : AppCompatActivity() {
             insets
         }
 
+        // Inicialización de las vistas
         txtCodigoDoctorActualizar = findViewById(R.id.txtCodigoDoctorActualizar)
         txtNombreDoctoresActualizar = findViewById(R.id.txtNombreDoctoresActualizar)
         txtDoctoresApellidosActualizar = findViewById(R.id.txtDoctoresApellidosActualizar)
         txtDNIDoctoresActualizar = findViewById(R.id.txtDNIDoctoresActualizar)
         spnEspecialidadDocActualizar = findViewById(R.id.spnEspecialidadDocActualizar)
         spnExperienciaDocActualizar = findViewById(R.id.spnExperienciaDocActualizar)
-        btnActualizarDoctor=findViewById(R.id.btnActualizarDoctor)
+        btnActualizarDoctor = findViewById(R.id.btnActualizarDoctor)
         btnBorrarDoctor = findViewById(R.id.btnBorrarDoctor)
         btnRegresarDoctor = findViewById(R.id.btnRegresarDoctor)
 
-        //Api
-
+        // Configuración del API
         api = ApiUtils.getApiDoctor()
 
-        //Obtener datos del Intent
-
+        // Obtener datos del Intent
         obtenerDatos()
 
+        // Configuración de los AutoCompleteTextViews con los arrays de recursos
+        configurarAutoCompleteTextViews()
+
+        // Eventos de los botones
         btnRegresarDoctor.setOnClickListener {
             regresarDoctor()
         }
 
-
         btnActualizarDoctor.setOnClickListener {
             actualizarDoctor()
         }
+
         btnBorrarDoctor.setOnClickListener {
             eliminarDoctor()
         }
-
     }
 
-    private fun regresarDoctor(){
-        var intent= Intent(this,ListaDoctoresActivity::class.java)
+    private fun configurarAutoCompleteTextViews() {
+        // Configurar AutoCompleteTextView para Especialidad
+        val opcionesEspecialidad = resources.getStringArray(R.array.item_doctores)
+        val adapterEspecialidad = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesEspecialidad)
+        spnEspecialidadDocActualizar.setAdapter(adapterEspecialidad)
+
+        // Configurar AutoCompleteTextView para Experiencia
+        val opcionesExperiencia = resources.getStringArray(R.array.item_experiencia)
+        val adapterExperiencia = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesExperiencia)
+        spnExperienciaDocActualizar.setAdapter(adapterExperiencia)
+    }
+
+    private fun regresarDoctor() {
+        val intent = Intent(this, ListaDoctoresActivity::class.java)
         startActivity(intent)
     }
 
@@ -93,7 +104,6 @@ class DoctorDetalleActivity : AppCompatActivity() {
         val especialidadDoctor = intent.getStringExtra("ESPECIALIDAD_DOCTOR") ?: ""
         val experienciaDoctor = intent.getStringExtra("EXPERIENCIA_DOCTOR") ?: ""
 
-
         // Asigna los datos a las vistas
         txtCodigoDoctorActualizar.text = codigoDoctor.toString()
         txtNombreDoctoresActualizar.text = nombreDoctor
@@ -103,7 +113,6 @@ class DoctorDetalleActivity : AppCompatActivity() {
         spnExperienciaDocActualizar.setText(experienciaDoctor)
 
         Log.d("DoctorDetalleActivity", "Código: $codigoDoctor, Nombre: $nombreDoctor, Apellidos: $apellidosDoctor")
-
     }
 
     private fun actualizarDoctor() {
@@ -131,6 +140,7 @@ class DoctorDetalleActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun eliminarDoctor() {
         val codigoDoctor = txtCodigoDoctorActualizar.text.toString().toInt()
 
@@ -147,11 +157,4 @@ class DoctorDetalleActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
-
-
 }
