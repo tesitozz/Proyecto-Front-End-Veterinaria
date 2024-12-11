@@ -36,7 +36,7 @@ class AnimalesDetallesActivity : AppCompatActivity() {
     private lateinit var btnRegresar: Button
     private lateinit var btnEliminar: Button
 
-    //Api
+    //Apis
     private lateinit var api: ApiServiceAnimal
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -32,7 +32,7 @@ class DoctorDetalleActivity : AppCompatActivity() {
     private lateinit var btnBorrarDoctor: Button
     private lateinit var btnRegresarDoctor: Button
 
-    // API
+    // APIs
     private lateinit var api: ApiServiceDoctores
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -32,7 +32,7 @@ class ClienteDetalleActivity : AppCompatActivity() {
     private lateinit var btnActualizarCliente: Button
     private lateinit var btnEliminarCliente: Button
 
-    //Api
+    //Apis
     private lateinit var api: ApiServiceCliente
 
     override fun onCreate(savedInstanceState: Bundle?) {
