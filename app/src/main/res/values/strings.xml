@@ -11,8 +11,8 @@
     <string name="labelGeneroAnimal">Ingresa Genero del Animal</string>
     <string name="labelTipoAnimal">Ingresa Tipo de Animal</string>
     <string-array name="simple_items">
-        <item>Masculino</item>
-        <item>Femenino</item>
+        <item>Macho</item>
+        <item>Hembra</item>
     </string-array>
     <string-array name="tipo_items">
         <item>Gato</item>
