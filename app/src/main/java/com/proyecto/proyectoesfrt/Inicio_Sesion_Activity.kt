@@ -40,13 +40,39 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
 
     }
 
+    //FUNCION LOGIN - INICIO SESIÓN
     fun logearse() {
         val username = txtUsuarioLogin.text.toString().trim()
         val password = txtClave.text.toString().trim()
 
         // Validar que los campos no estén vacíos
-        if (username.isEmpty() || password.isEmpty()) {
-            mostrarError("Por favor ingresa tus credenciales")
+        if (username.isEmpty()) {
+            mostrarError("Por favor ingresa tu usuario")
+            return
+        }
+
+        if (password.isEmpty()) {
+            mostrarError("Por favor ingresa tu contraseña")
+            return
+        }
+
+        // Validación del campo de usuario (evitar caracteres especiales)
+        val regexUsuario = "^[a-zA-Z0-8]+$".toRegex() // Solo permite letras y números
+        if (!username.matches(regexUsuario)) {
+            mostrarError("El usuario no puede contener caracteres especiales.")
+            return
+        }
+
+        // Validación de la contraseña (mínimo 9 caracteres)
+        if (password.length < 8) {
+            mostrarError("La contraseña debe tener al menos 9 caracteres.")
+            return
+        }
+
+        // Validación de la contraseña (debe contener al menos una mayúscula)
+        val regexContrasenaMayuscula = ".*[A-Z].*".toRegex() // La contraseña debe tener al menos una letra mayúscula
+        if (!password.matches(regexContrasenaMayuscula)) {
+            mostrarError("La contraseña debe contener al menos una letra mayúscula.")
             return
         }
 
@@ -70,7 +96,7 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
                         mostrarError("Usuario no encontrado")
                     }
                 } else {
-                    mostrarError("Error en las credenciales o en el servidor")
+                    mostrarError("Contraseña o usuario incorrecto")
                 }
             }
 
@@ -81,6 +107,9 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
             }
         })
     }
+
+
+
     private fun mostrarError(mensaje: String) {
         AlertDialog.Builder(this)
             .setTitle("Error")

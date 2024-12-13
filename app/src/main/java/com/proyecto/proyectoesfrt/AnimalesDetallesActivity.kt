@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -113,6 +114,7 @@ class AnimalesDetallesActivity : AppCompatActivity() {
         spnTipo.setText(tipo)
     }
 
+    //ELIMINAR ANIMAL
     private fun eliminarAnimal() {
         val codigoAnimal = txtCodigoAni.text.toString()
 
@@ -121,29 +123,40 @@ class AnimalesDetallesActivity : AppCompatActivity() {
             return
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response: Response<Void> = api.eliminarAnimal(codigoAnimal.toInt())
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        Toast.makeText(this@AnimalesDetallesActivity, "Animal eliminado con éxito", Toast.LENGTH_SHORT).show()
-                        setResult(RESULT_OK)
-                        volverListado()
-                    } else {
-                        Toast.makeText(this@AnimalesDetallesActivity, "Error al eliminar el animal", Toast.LENGTH_SHORT).show()
+        // Mostrar un cuadro de diálogo de confirmación
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de que deseas eliminar este animal?")
+            .setPositiveButton("Sí") { _, _ ->
+                // Proceder con la eliminación si el usuario confirma
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val response: Response<Void> = api.eliminarAnimal(codigoAnimal.toInt())
+                        withContext(Dispatchers.Main) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@AnimalesDetallesActivity, "Animal eliminado con éxito", Toast.LENGTH_SHORT).show()
+                                setResult(RESULT_OK)
+                                volverListado()
+                            } else {
+                                Toast.makeText(this@AnimalesDetallesActivity, "Error al eliminar el animal", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: NumberFormatException) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@AnimalesDetallesActivity, "Código inválido", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            } catch (e: NumberFormatException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AnimalesDetallesActivity, "Código inválido", Toast.LENGTH_SHORT).show()
-                }
             }
-        }
+            .setNegativeButton("No", null) // No hacer nada si el usuario cancela
+            .show()
     }
 
+    //ACTUALIZAR ANIMAL
     private fun actualizarAnimal() {
         val codigoAnimal = txtCodigoAni.text.toString()
 
+        // Validación del código del animal
         if (codigoAnimal.isEmpty()) {
             Toast.makeText(this, "Por favor, ingrese el código del animal", Toast.LENGTH_SHORT).show()
             return
@@ -157,28 +170,68 @@ class AnimalesDetallesActivity : AppCompatActivity() {
         val sexo = spnSexo.text.toString()
         val tipo = spnTipo.text.toString()
 
+        // Validaciones adicionales
+        if (nombreAnimal.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el nombre del animal", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (dueno.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el nombre del dueño", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (edad <= 0) {
+            Toast.makeText(this, "La edad debe ser mayor a 0", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (peso <= 0.0) {
+            Toast.makeText(this, "El peso debe ser mayor a 0", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (informacionAnimal.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese información adicional del animal", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Crear objeto del animal actualizado
         val animalActualizado = Animales(
-                codigoAnimal = codigoAnimal.toInt(),
-                nombreAnimal = nombreAnimal,
-                dueno = dueno,
-                edad = edad,
-                peso = peso,
-                informacionAnimal = informacionAnimal,
-                generoAnim = sexo,
-                tipoAnimal = tipo
+            codigoAnimal = codigoAnimal.toInt(),
+            nombreAnimal = nombreAnimal,
+            dueno = dueno,
+            edad = edad,
+            peso = peso,
+            informacionAnimal = informacionAnimal,
+            generoAnim = sexo,
+            tipoAnimal = tipo
         )
 
+        // Llamada a la API para actualizar el animal
         lifecycleScope.launch {
             val response = api.actualizarAnimal(codigoAnimal.toInt(), animalActualizado)
             if (response.isSuccessful) {
-                Toast.makeText(this@AnimalesDetallesActivity, "Animal actualizado con éxito", Toast.LENGTH_SHORT).show()
-                finish()
-                volverListado()
+                // Mostrar un cuadro de diálogo atractivo en lugar de un Toast
+                AlertDialog.Builder(this@AnimalesDetallesActivity)
+                    .setTitle("¡Éxito!")
+                    .setMessage("El animal ha sido actualizado correctamente.")
+                    .setPositiveButton("Aceptar") { _, _ ->
+                        finish()
+                        volverListado()
+                    }
+                    .show()
             } else {
-                Toast.makeText(this@AnimalesDetallesActivity, "Error al actualizar el animal", Toast.LENGTH_SHORT).show()
+                // Mostrar un mensaje de error si la actualización falla
+                AlertDialog.Builder(this@AnimalesDetallesActivity)
+                    .setTitle("Error")
+                    .setMessage("Hubo un problema al actualizar el animal. Intenta nuevamente.")
+                    .setPositiveButton("Aceptar", null)
+                    .show()
             }
         }
     }
+
 
     private fun volverListado() {
         val intent = Intent(this, ListaAnimalesActivity::class.java)

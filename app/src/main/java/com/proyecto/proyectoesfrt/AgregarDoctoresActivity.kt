@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -58,32 +59,98 @@ class AgregarDoctoresActivity : AppCompatActivity() {
 
     }
 
+    //REGISTRAR DOCTOR --FALTAV VALIDACIÓN
     private fun registrarDoctorApi() {
         // Recoge los datos de las vistas
-        val nombreDoctor = txtNombreDoctoresRegistrar.text.toString()
-        val apellidosDoctor = txtDoctoresApellidosRegistrar.text.toString()
-        val dniDoctor = txtDNIDoctoresRegistrar.text.toString().toIntOrNull() ?: 0 // Cambiado para manejar excepciones
-        val especialidadDoctor = spnEspecialidadDocRegistrar.text.toString()
-        val experienciaDoctor = spnExperienciaDocRegistrar.text.toString()
+        val nombreDoctor = txtNombreDoctoresRegistrar.text.toString().trim()
+        val apellidosDoctor = txtDoctoresApellidosRegistrar.text.toString().trim()
+        val dniDoctor = txtDNIDoctoresRegistrar.text.toString().trim()
+        val especialidadDoctor = spnEspecialidadDocRegistrar.text.toString().trim()
+        val experienciaDoctor = spnExperienciaDocRegistrar.text.toString().trim()
+
+        // Validación de los campos
+        if (nombreDoctor.isEmpty()) {
+            showAlert("El nombre no puede estar vacío", AlertType.WARNING)
+            return
+        }
+
+        if (apellidosDoctor.isEmpty()) {
+            showAlert("Los apellidos no pueden estar vacíos", AlertType.WARNING)
+            return
+        }
+
+        if (dniDoctor.isEmpty()) {
+            showAlert("El DNI no puede estar vacío", AlertType.WARNING)
+            return
+        }
+
+        if (dniDoctor.length != 8 || !dniDoctor.all { it.isDigit() }) {
+            showAlert("El DNI debe contener exactamente 8 dígitos numéricos", AlertType.WARNING)
+            return
+        }
+
+        if (especialidadDoctor.isEmpty()) {
+            showAlert("La especialidad no puede estar vacía", AlertType.WARNING)
+            return
+        }
+
+        if (experienciaDoctor.isEmpty()) {
+            showAlert("La experiencia no puede estar vacía", AlertType.WARNING)
+            return
+        }
 
         // Crea un objeto Doctor con los datos
-        val nuevoDoctor = Doctor(0, nombreDoctor, apellidosDoctor, dniDoctor, especialidadDoctor, experienciaDoctor)
+        val nuevoDoctor = Doctor(
+            codigoDoctor = 0,
+            nombreDoctor = nombreDoctor,
+            apellidoDoctor = apellidosDoctor,
+            dniDoctor = dniDoctor.toInt(),
+            especialidad = especialidadDoctor,
+            experiencia = experienciaDoctor
+        )
 
         // Llama a tu API para registrar el doctor
         lifecycleScope.launch {
             try {
                 val response = api.insertarDoctor(nuevoDoctor)
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AgregarDoctoresActivity, "Doctor registrado con éxito", Toast.LENGTH_SHORT).show()
+                    showAlert("Doctor registrado con éxito", AlertType.SUCCESS)
                     regresarDoctor() // Vuelve a la lista de doctores
                 } else {
-                    Toast.makeText(this@AgregarDoctoresActivity, "Error al registrar el doctor: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    showAlert("Error al registrar el doctor: ${response.message()}", AlertType.ERROR)
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AgregarDoctoresActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showAlert("Error: ${e.message}", AlertType.ERROR)
             }
         }
     }
+
+    // Función para mostrar alertas con estilos personalizados
+    enum class AlertType {
+        SUCCESS, WARNING, ERROR
+    }
+
+    fun showAlert(mensaje: String, type: AlertType) {
+        val builder = AlertDialog.Builder(this)
+
+        when (type) {
+            AlertType.SUCCESS -> {
+                builder.setTitle("\u2705 ÉXITO")
+            }
+            AlertType.WARNING -> {
+                builder.setTitle("\u26A0 ADVERTENCIA")
+            }
+            AlertType.ERROR -> {
+                builder.setTitle("\u274C ERROR")
+            }
+        }
+
+        builder.setMessage(mensaje)
+        builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
 
 
     private fun  regresarDoctor(){

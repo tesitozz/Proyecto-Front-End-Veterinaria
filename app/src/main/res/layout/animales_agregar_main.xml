@@ -20,9 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
         android:layout_marginTop="50dp"
-        android:fontFamily="sans-serif-smallcaps"
+        android:fontFamily="sans-serif-condensed-medium"
         android:text="Registrar Animales"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
