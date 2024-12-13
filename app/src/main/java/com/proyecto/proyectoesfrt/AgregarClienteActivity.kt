@@ -181,6 +181,7 @@ class AgregarClienteActivity : AppCompatActivity() {
         SUCCESS, WARNING, ERROR
     }
 
+
     fun showAlert(mensaje: String, type: AlertType) {
         when (type) {
             AlertType.SUCCESS -> {
