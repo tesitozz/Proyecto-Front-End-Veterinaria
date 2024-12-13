@@ -53,17 +53,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun cerrarSesion() {
-        val sharedPreferences = getSharedPreferences("MiPreferencia", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
+        // Mostrar un cuadro de diálogo de confirmación
+        AlertDialog.Builder(this)
+            .setTitle("Cerrar sesión")
+            .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+            .setPositiveButton("Sí") { _, _ ->
+                // Proceder con el cierre de sesión si el usuario confirma
+                val sharedPreferences = getSharedPreferences("MiPreferencia", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.clear()
+                editor.apply()
 
-        // Paso 2: Redirigir a la actividad de inicio de sesión
-        val intent = Intent(this, Inicio_Sesion_Activity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+                // Paso 2: Redirigir a la actividad de inicio de sesión
+                val intent = Intent(this, Inicio_Sesion_Activity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+            .setNegativeButton("No", null) // No hacer nada si el usuario cancela
+            .show()
     }
+
 
 
 

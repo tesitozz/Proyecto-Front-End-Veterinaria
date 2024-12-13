@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="#5085D8"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#181E27"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -21,11 +21,13 @@
             android:layout_width="368dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
-            android:fontFamily="sans-serif-smallcaps"
+            android:fontFamily="sans-serif-condensed-medium"
             android:padding="10dp"
-            android:text="Inicio"
-            android:textAlignment="viewStart"
-            android:textSize="48sp" />
+            android:text="INICIO   BIENVENIDO"
+            android:textAlignment="center"
+            android:textColor="#F1E9E9"
+            android:textSize="48sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnClientes"
@@ -33,8 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:background="@drawable/button_background"
-            android:backgroundTint="@color/verde_menu"
+            android:backgroundTint="@color/color1"
             android:text="Ir a Clientes"
+            android:textStyle="bold"
             app:icon="@drawable/account" />
 
         <Button
@@ -42,9 +45,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="Ir a Animales"
-            android:backgroundTint="@color/verde_menu"
             android:background="@drawable/button_background"
+            android:backgroundTint="@color/color1"
+            android:text="Ir a Animales"
+            android:textStyle="bold"
             app:icon="@drawable/dog" />
 
         <Button
@@ -52,9 +56,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="190dp"
-            android:backgroundTint="@color/verde_menu"
             android:background="@drawable/button_background"
+            android:backgroundTint="@color/color1"
             android:text="Ir a Doctores"
+            android:textStyle="bold"
             app:icon="@drawable/doctor" />
 
         <Button
@@ -62,8 +67,8 @@
             android:layout_width="153dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/color6"
-            android:text="Cerrar Sesion"
-            app:icon="@drawable/close_circle"/>
+            android:text="Salir"
+            app:icon="@drawable/close_circle" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

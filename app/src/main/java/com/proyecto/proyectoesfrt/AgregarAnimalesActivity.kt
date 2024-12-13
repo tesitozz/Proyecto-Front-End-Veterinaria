@@ -2,11 +2,13 @@ package com.proyecto.proyectoesfrt
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -58,17 +60,68 @@ class AgregarAnimalesActivity : AppCompatActivity() {
 
     }
 
+    //REGISTRAR ANIMAL --VALIDADO ANIMALE
     private fun registrarAnimalApi() {
         // Obtener los valores de los campos de texto
-        val nombre = txtNombreAnimal.text.toString()
-        val dueno = txtDueno.text.toString()
-        val edad = txtEdad.text.toString().toIntOrNull() ?: 0 // Cambiar a 0 si no es un número válido
-        val peso = txtPeso.text.toString().toDoubleOrNull() ?: 0.0 // Cambiar a 0.0 si no es un número válido
-        val informacion = txtInformacionAnimal.text.toString()
-        val sexo = spnSexo.text.toString()
-        val tipo = spnTipo.text.toString()
+        val nombre = txtNombreAnimal.text.toString().trim()
+        val dueno = txtDueno.text.toString().trim()
+        val edadStr = txtEdad.text.toString().trim() // Mantener como String para validaciones
+        val pesoStr = txtPeso.text.toString().trim() // Mantener como String para validaciones
+        val informacion = txtInformacionAnimal.text.toString().trim()
+        val sexo = spnSexo.isSelected?.toString()?.trim() ?: "" // Asegurar valor desde Spinner
+        val tipo = spnTipo.isSelected?.toString()?.trim() ?: ""
 
-        // Crear un objeto Animales sin el códigoAnimal
+        // Validar que ningún campo esté vacío
+        if (nombre.isEmpty()) {
+            showAlert("Por favor, ingresa el nombre del animal.")
+            return
+        }
+
+        if (dueno.isEmpty()) {
+            showAlert("Por favor, ingresa el nombre del dueño.")
+            return
+        }
+
+        if (edadStr.isEmpty()) {
+            showAlert("Por favor, ingresa la edad del animal.")
+            return
+        }
+
+        if (pesoStr.isEmpty()) {
+            showAlert("Por favor, ingresa el peso del animal.")
+            return
+        }
+
+        if (informacion.isEmpty()) {
+            showAlert("Por favor, ingresa información adicional sobre el animal.")
+            return
+        }
+
+        if (sexo.isEmpty() || sexo == "Seleccionar") {
+            showAlert("Por favor, selecciona el sexo del animal.")
+            return
+        }
+
+        if (tipo.isEmpty() || tipo == "Seleccionar") {
+            showAlert("Por favor, selecciona el tipo de animal.")
+            return
+        }
+
+        // Validar que la edad sea un número válido y no mayor a 90
+        val edad = edadStr.toIntOrNull()
+        if (edad == null || edad <= 0 || edad > 100) {
+            showAlert("La edad del animal debe ser un número válido entre 1 y 90.")
+            return
+        }
+
+        // Validar que el peso sea un número válido
+        val peso = pesoStr.toDoubleOrNull()
+        if (peso == null || peso <= 0) {
+            showAlert("El peso del animal debe ser un número válido mayor a 0.")
+            return
+        }
+
+        // Crear un objeto Animales con los datos
         val nuevoAnimal = Animales(
             nombreAnimal = nombre,
             dueno = dueno,
@@ -85,21 +138,28 @@ class AgregarAnimalesActivity : AppCompatActivity() {
                 val response = api.insertarAnimal(nuevoAnimal)
                 if (response.isSuccessful) {
                     // Mostrar mensaje de éxito
-                    Toast.makeText(this@AgregarAnimalesActivity, "Animal registrado con éxito", Toast.LENGTH_SHORT).show()
-
+                    showAlert("Animal registrado con éxito.")
                     // Redirigir a ListaAnimalesActivity
                     val intent = Intent(this@AgregarAnimalesActivity, ListaAnimalesActivity::class.java)
                     startActivity(intent)
                     finish() // Finaliza la actividad actual
                 } else {
                     // Manejar el error de la respuesta
-                    Toast.makeText(this@AgregarAnimalesActivity, "Error al registrar el animal: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    showAlert("Error al registrar el animal: ${response.message()}")
                 }
             } catch (e: Exception) {
                 // Manejar excepciones
-                Toast.makeText(this@AgregarAnimalesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showAlert("Error: ${e.message}")
             }
         }
     }
+
+    fun showAlert(mensaje: String) {
+        val toast = Toast.makeText(this, mensaje, Toast.LENGTH_LONG) // LONG muestra el mensaje por más tiempo
+        toast.show()
+    }
+
+
+
 
 }

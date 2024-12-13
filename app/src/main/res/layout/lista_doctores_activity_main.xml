@@ -38,8 +38,9 @@
                     android:id="@+id/btnAgregarDoctor"
                     android:layout_width="199dp"
                     android:layout_height="wrap_content"
-                    android:text="Agregar"
                     android:backgroundTint="@color/color1"
+                    android:text="Agregar"
+                    android:textStyle="bold"
                     app:icon="@drawable/plus_thick" />
             </LinearLayout>
 
@@ -54,6 +55,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/color2"
                     android:text="Regresar"
+                    android:textStyle="bold"
                     app:icon="@drawable/keyboard_return" />
             </LinearLayout>
         </LinearLayout>

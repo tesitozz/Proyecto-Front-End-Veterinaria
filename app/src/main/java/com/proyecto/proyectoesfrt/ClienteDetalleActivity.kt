@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 class ClienteDetalleActivity : AppCompatActivity() {
 
@@ -115,59 +117,123 @@ class ClienteDetalleActivity : AppCompatActivity() {
         Log.d("ClienteDetalleActivity", "Código: $codigoCliente, Nombre: $nombreCliente, Apellidos: $apellidosCliente, Género: $generoCliente")
     }
 
+    //ACTUALIZAR CLIENTE
     private fun actualizarCliente() {
-        // Obtener los datos del cliente desde los campos de texto
-        val codigoCliente = txtCodigoCliente.text.toString().toInt()
+        // Validaciones en los datos del cliente
+        val codigoCliente = txtCodigoCliente.text.toString()
+        if (codigoCliente.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el código del cliente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val nombreCliente = txtNombreCliente.text.toString()
+        if (nombreCliente.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese el nombre del cliente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val apellidosCliente = txtClienteApellidos.text.toString()
-        val dniCliente = txtDNICliente.text.toString().toInt()
-        val generoCliente = spnGeneroCliente.text.toString() // Obtener el texto seleccionado del AutoCompleteTextView
+        if (apellidosCliente.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese los apellidos del cliente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dniCliente = txtDNICliente.text.toString()
+        if (dniCliente.isEmpty() || dniCliente.length != 8 || !dniCliente.matches(Regex("\\d{8}"))) {
+            Toast.makeText(this, "Por favor, ingrese un DNI válido (exactamente 8 dígitos numéricos)", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val generoCliente = spnGeneroCliente.text.toString()
+        if (generoCliente.isEmpty()) {
+            Toast.makeText(this, "Por favor, seleccione un género", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val direccionCliente = txtDireccionCliente.text.toString()
+        if (direccionCliente.isEmpty()) {
+            Toast.makeText(this, "Por favor, ingrese la dirección del cliente", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         // Crear un objeto Cliente con los datos actualizados
         val clienteActualizado = Cliente(
-                codigoCliente = codigoCliente,
-                nombreCliente = nombreCliente,
-                apellidosCliente = apellidosCliente,
-                dniCliente = dniCliente,
-                generoClie = generoCliente,
-                informacionCliente = direccionCliente
+            codigoCliente = codigoCliente.toInt(),
+            nombreCliente = nombreCliente,
+            apellidosCliente = apellidosCliente,
+            dniCliente = dniCliente.toInt(),
+            generoClie = generoCliente,
+            informacionCliente = direccionCliente
         )
 
         // Llamar a la API para actualizar el cliente
         CoroutineScope(Dispatchers.IO).launch {
-            val response = api.actualizarCliente(codigoCliente, clienteActualizado)
+            val response = api.actualizarCliente(codigoCliente.toInt(), clienteActualizado)
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    // Actualización exitosa
-                    Toast.makeText(this@ClienteDetalleActivity, "Cliente actualizado con éxito", Toast.LENGTH_SHORT).show()
-                    finish()
-                    regresarCliente()
+                    // Mostrar un cuadro de diálogo atractivo
+                    AlertDialog.Builder(this@ClienteDetalleActivity)
+                        .setTitle("¡Éxito!")
+                        .setMessage("El cliente ha sido actualizado correctamente.")
+                        .setPositiveButton("Aceptar") { _, _ ->
+                            finish()
+                            regresarCliente()
+                        }
+                        .show()
                 } else {
-                    // Manejar el error
-                    Toast.makeText(this@ClienteDetalleActivity, "Error al actualizar el cliente: ${response.message()}", Toast.LENGTH_SHORT).show()
+                    // Mostrar un mensaje de error si la actualización falla
+                    AlertDialog.Builder(this@ClienteDetalleActivity)
+                        .setTitle("Error")
+                        .setMessage("Hubo un problema al actualizar el cliente. Intenta nuevamente.\n${response.message()}")
+                        .setPositiveButton("Aceptar", null)
+                        .show()
                 }
             }
         }
     }
 
+
+
+    //ELIMINAR CLIENTES
     private fun eliminarCliente() {
-        // Obtener el código del cliente que se va a eliminar
-        val codigoCliente = txtCodigoCliente.text.toString().toInt()
+        val codigoCliente = txtCodigoCliente.text.toString()
 
-        // Llamar a la API para eliminar el cliente
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = api.eliminarCliente(codigoCliente)
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    // Eliminación exitosa
-                    Toast.makeText(this@ClienteDetalleActivity, "Cliente eliminado con éxito", Toast.LENGTH_SHORT).show()
-                    regresarCliente() // Cerrar la actividad después de eliminar
-                } else {
-                    // Manejar el error
-                    Toast.makeText(this@ClienteDetalleActivity, "Error al eliminar el cliente: ${response.message()}", Toast.LENGTH_SHORT).show()
+        if (codigoCliente.isEmpty()) {
+            Toast.makeText(this@ClienteDetalleActivity, "Por favor, ingrese el código del cliente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Mostrar un cuadro de diálogo de confirmación
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Estás seguro de que deseas eliminar este cliente?")
+            .setPositiveButton("Sí") { _, _ ->
+                // Proceder con la eliminación si el usuario confirma
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val response: Response<Void> = api.eliminarCliente(codigoCliente.toInt())
+                        withContext(Dispatchers.Main) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@ClienteDetalleActivity, "Cliente eliminado con éxito", Toast.LENGTH_SHORT).show()
+                                setResult(RESULT_OK)
+                                regresarCliente()
+                            } else {
+                                Toast.makeText(this@ClienteDetalleActivity, "Error al eliminar el cliente", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: NumberFormatException) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@ClienteDetalleActivity, "Código inválido", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(this@ClienteDetalleActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
-        }
+            .setNegativeButton("No", null) // No hacer nada si el usuario cancela
+            .show()
     }
+
 }
