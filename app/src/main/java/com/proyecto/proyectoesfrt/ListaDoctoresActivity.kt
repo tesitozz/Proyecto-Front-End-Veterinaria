@@ -1,26 +1,32 @@
 package com.proyecto.proyectoesfrt
 
-import DoctorAdapter
+import MedicoAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.proyecto.proyectoesfrt.api.RetrofitClient
+import com.example.appproyecto.utils.ApiUtils
+import com.proyecto.proyectoesfrt.entidad.Medico
+import com.proyecto.proyectoesfrt.service.ApiServiceMedicos
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 class ListaDoctoresActivity : AppCompatActivity() {
 
     private lateinit var rvDoctores: RecyclerView
     private lateinit var btnAgregarDoctor: Button
     private lateinit var btnRegresarDoctor: Button
+    private lateinit var api: ApiServiceMedicos
+    private lateinit var medicoAdapter: MedicoAdapter
+    private var doctoresList: MutableList<Medico> = mutableListOf()
 
     companion object {
         private const val REQUEST_CODE = 100 // Código de solicitud para el Intent
@@ -42,6 +48,10 @@ class ListaDoctoresActivity : AppCompatActivity() {
         btnAgregarDoctor = findViewById(R.id.btnAgregarDoctor)
         btnRegresarDoctor = findViewById(R.id.btnRegresarDoctor)
 
+        // Configuración del RecyclerView y su adaptador
+        rvDoctores.layoutManager = LinearLayoutManager(this)
+        medicoAdapter = MedicoAdapter(this, doctoresList)
+        rvDoctores.adapter = medicoAdapter
         // Cargar datos desde la API
         cargarDoctorDesdeApi()
 
@@ -53,6 +63,9 @@ class ListaDoctoresActivity : AppCompatActivity() {
         btnRegresarDoctor.setOnClickListener {
             regresarDoctor()
         }
+
+        api = ApiUtils.getApiDoctor()
+
     }
 
     fun regresarDoctor(){
@@ -70,18 +83,21 @@ class ListaDoctoresActivity : AppCompatActivity() {
     }
 
     private fun cargarDoctorDesdeApi() {
-        // Llamada a la API
-        lifecycleScope.launch {
-            val response = RetrofitClient.apiServiceDoctor.getAllDoctores()
-            if (response.isSuccessful) {
-                val doctoresList = response.body() ?: emptyList()
-                val adaptador = DoctorAdapter(this@ListaDoctoresActivity, doctoresList)
-                rvDoctores.adapter = adaptador
-                rvDoctores.layoutManager = LinearLayoutManager(this@ListaDoctoresActivity)
-            } else {
-                // Manejar errores de la respuesta
-                Log.e("ListaAnimalesActivity", "Error al cargar Doctor: ${response.message()}")
-                Toast.makeText(this@ListaDoctoresActivity, "Error al cargar Doctores", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val response: Response<List<Medico>> = withContext(Dispatchers.IO) {
+                    api.getAllMedicos() // Llamada suspendida
+                }
+
+                if (response.isSuccessful && response.body() != null) {
+                    doctoresList.clear()
+                    doctoresList.addAll(response.body()!!)
+                    medicoAdapter.notifyDataSetChanged()
+                } else {
+                    // Manejo de errores si la respuesta no es exitosa
+                }
+            } catch (e: Exception) {
+                // Manejo de errores
             }
         }
     }

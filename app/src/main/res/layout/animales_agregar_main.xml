@@ -53,46 +53,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/labelNombresDueño"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/account">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtNombreDuenoAgregar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="@string/labelInformacionAnimal"
-            app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/dog">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtInformacionAnimalAgregar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"/>
-
         <LinearLayout
             android:layout_width="378dp"
             android:layout_height="wrap_content"
@@ -134,60 +94,101 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="379dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField6"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:hint="@string/labelcolorPerro">
 
-            <LinearLayout
-                android:layout_width="178dp"
+            <AutoCompleteTextView
+                android:id="@+id/spnColorAnimalAgregar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:inputType="none"
+                app:simpleItems="@array/label_color" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textField6"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="208dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/labelGeneroAnimal">
+        </com.google.android.material.textfield.TextInputLayout>
 
-                    <AutoCompleteTextView
-                        android:id="@+id/spnGeneroAgregar"
-                        android:layout_width="171dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        app:simpleItems="@array/simple_items" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField6"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/labelTiposAnimal">
 
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
+            <AutoCompleteTextView
+                android:id="@+id/spnTipoAnimalRegistrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/tipoAnimal" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textField10"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:hint="@string/labelTipoAnimal">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField6"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/labelTipoRaza">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/spnTipoAgregar"
-                        android:layout_width="193dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        app:simpleItems="@array/tipo_items" />
+            <AutoCompleteTextView
+                android:id="@+id/spnRazaAnimalAgregar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/tipoRazaAnimal" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-            </LinearLayout>
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="Seleccionar Dueño"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-        </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField6"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/labelDNIClientes">
+
+            <AutoCompleteTextView
+                android:id="@+id/spnListarDniClientesAnimales"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                app:simpleItems="@array/spnDniListado" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtNombreCargarDatos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -197,19 +198,12 @@
 
             <Button
                 android:id="@+id/btnRegistrarAnimalAgregar"
-                android:layout_width="170dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registrar"
                 android:backgroundTint="@color/color3"
+                android:text="Registrar"
                 app:icon="@drawable/plus_thick" />
-
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
 
 
     </LinearLayout>

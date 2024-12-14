@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.appproyecto.utils.ApiUtils
 import com.proyecto.proyectoesfrt.entidad.Cliente
+import com.proyecto.proyectoesfrt.service.ApiServiceAnimal
 import com.proyecto.proyectoesfrt.service.ApiServiceCliente
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,18 +25,21 @@ import retrofit2.Response
 
 class ClienteDetalleActivity : AppCompatActivity() {
 
-    private lateinit var txtCodigoCliente: TextView
-    private lateinit var txtNombreCliente: TextView
-    private lateinit var txtClienteApellidos: TextView
-    private lateinit var txtDNICliente: TextView
-    private lateinit var txtDireccionCliente: TextView
-    private lateinit var spnGeneroCliente: AutoCompleteTextView // Cambiar a AutoCompleteTextView
+    private lateinit var txtNombreClienteDetalles: TextView
+    private lateinit var txtClienteApellidosDetalles: TextView
+    private lateinit var txtDniClienteDetalles: TextView
+    private lateinit var txtNumeroCelularAgregarDetalle: TextView
+    private lateinit var txtCorreoClienteAgregarDetalle: TextView
+    private lateinit var spnRegistrarGeneroClienteDetalle: AutoCompleteTextView // Cambiar a AutoCompleteTextView
+    private lateinit var txtDireccionClienteAgregarDetalle:TextView
     private lateinit var btnRegresarCliente: Button
-    private lateinit var btnActualizarCliente: Button
-    private lateinit var btnEliminarCliente: Button
+    private lateinit var btnRegistrarClienteModificar: Button
+    private lateinit var btnClienteBorrarDetalle: Button
 
     //Apis
     private lateinit var api: ApiServiceCliente
+    private var clienteId: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,181 +53,118 @@ class ClienteDetalleActivity : AppCompatActivity() {
         }
 
         // Inicializar vistas
-        txtCodigoCliente = findViewById(R.id.txtCodigoClienteActualizar)
-        txtNombreCliente = findViewById(R.id.txtNombreClienteActualizar)
-        txtClienteApellidos = findViewById(R.id.txtClienteApellidosActualizar)
-        txtDNICliente = findViewById(R.id.txtDNIClienteActualizar)
-        txtDireccionCliente = findViewById(R.id.txtDireccionClienteActualizar)
-        spnGeneroCliente = findViewById(R.id.spnGeneroClienteActualizar) // Asegúrate de que el ID sea correcto
-        btnRegresarCliente = findViewById(R.id.btnRegresarCliente)
-        btnActualizarCliente = findViewById(R.id.btnActualizarCliente)
-        btnEliminarCliente = findViewById(R.id.btnEliminarCliente)
 
-        // Inicializar API
+        txtNombreClienteDetalles = findViewById(R.id.txtNombreClienteDetalles)
+        txtClienteApellidosDetalles = findViewById(R.id.txtClienteApellidosDetalles)
+        txtDniClienteDetalles = findViewById(R.id.txtDniClienteDetalles)
+        txtNumeroCelularAgregarDetalle = findViewById(R.id.txtNumeroCelularAgregarDetalle)
+        txtCorreoClienteAgregarDetalle = findViewById(R.id.txtCorreoClienteAgregarDetalle)
+        spnRegistrarGeneroClienteDetalle = findViewById(R.id.spnRegistrarGeneroClienteDetalle)
+        txtDireccionClienteAgregarDetalle = findViewById(R.id.txtDireccionClienteAgregarDetalle)
+        btnRegresarCliente = findViewById(R.id.btnRegresarCliente)
+        btnRegistrarClienteModificar = findViewById(R.id.btnRegistrarClienteModificar)
+        btnClienteBorrarDetalle = findViewById(R.id.btnClienteBorrarDetalle)
+
+
+
+        btnRegistrarClienteModificar.setOnClickListener { modificarCliente() }
+
+        btnClienteBorrarDetalle.setOnClickListener { borrarCliente() }
+
+        btnRegresarCliente.setOnClickListener { regresarCliente() }
+
         api = ApiUtils.getApiCliente()
 
-        // Obtener datos del Intent
-        obtenerDatos()
+        // Obtener los datos del cliente desde el Intent
+        clienteId = intent.getLongExtra("id", 0) // Se obtiene el id del Intent
+        val nombre = intent.getStringExtra("nombres")
+        val apellidos = intent.getStringExtra("apellidos")
+        val dni = intent.getStringExtra("dni")
+        val genero = intent.getStringExtra("genero")
+        val correo = intent.getStringExtra("correo")
+        val celular = intent.getStringExtra("celular")
+        val direccion = intent.getStringExtra("direccion")
 
-        // Setear listeners de botones
-        btnRegresarCliente.setOnClickListener {
-            regresarCliente()
-        }
+        // Mostrar los datos en los campos
+        txtNombreClienteDetalles.text = nombre ?: "Nombre no disponible"
+        txtClienteApellidosDetalles.text = apellidos ?: "Apellidos no disponibles"
+        txtDniClienteDetalles.text = dni ?: "DNI no disponible"
+        txtNumeroCelularAgregarDetalle.text = celular ?: "Número no disponible"
+        txtCorreoClienteAgregarDetalle.text = correo ?: "Correo no disponible"
+        spnRegistrarGeneroClienteDetalle.setText(genero ?: "Género no disponible", false)
+        txtDireccionClienteAgregarDetalle.text = direccion ?: "Dirección no disponible"
 
-        btnActualizarCliente.setOnClickListener {
-            actualizarCliente()
-        }
-
-        btnEliminarCliente.setOnClickListener {
-            eliminarCliente()
-        }
     }
 
-    private fun regresarCliente() {
-        val intent = Intent(this, ListaClientesActivity::class.java)
-        startActivity(intent)
-    }
+    private fun modificarCliente() {
+        // Obtener los nuevos valores de los campos editables
+        val nuevoNombre = txtNombreClienteDetalles.text.toString()
+        val nuevoApellido = txtClienteApellidosDetalles.text.toString()
+        val nuevoDni = txtDniClienteDetalles.text.toString()
+        val nuevoGenero = spnRegistrarGeneroClienteDetalle.text.toString()
+        val nuevoCorreo = txtCorreoClienteAgregarDetalle.text.toString()
+        val nuevoCelular = txtNumeroCelularAgregarDetalle.text.toString()
+        val nuevaDireccion = txtDireccionClienteAgregarDetalle.text.toString()
 
-    private fun obtenerDatos() {
-        // Obtener datos del Intent
-        val codigoCliente = intent.getIntExtra("CODIGO_CLIENTE", 0)
-        val nombreCliente = intent.getStringExtra("NOMBRE_CLIENTE") ?: "N/A"
-        val apellidosCliente = intent.getStringExtra("APELLIDOS_CLIENTE") ?: "N/A"
-        val dniCliente = intent.getIntExtra("DNI_CLIENTE", 0).toString()
-        val generoCliente = intent.getStringExtra("GENERO_CLIE") ?: "N/A"
-        val informacionCliente = intent.getStringExtra("INFORMACION_CLIENTE") ?: "N/A"
-
-        // Rellenar los campos de texto
-        txtCodigoCliente.text = codigoCliente.toString()
-        txtNombreCliente.text = nombreCliente
-        txtClienteApellidos.text = apellidosCliente
-        txtDNICliente.text = dniCliente
-        txtDireccionCliente.text = informacionCliente
-
-        // Configurar el AutoCompleteTextView (en lugar de Spinner)
-        val opcionesGenero = resources.getStringArray(R.array.clientes_items)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, opcionesGenero)
-        spnGeneroCliente.setAdapter(adapter) // Configuramos el adaptador del AutoCompleteTextView
-
-        // Seleccionar el valor actual del género
-        val posicionGenero = opcionesGenero.indexOf(generoCliente)
-        if (posicionGenero >= 0) {
-            spnGeneroCliente.setText(generoCliente, false) // Establecer el valor seleccionado
-        } else {
-            spnGeneroCliente.setText(opcionesGenero[0], false) // Default a la primera opción si no coincide
-        }
-
-        // Registro para depuración
-        Log.d("ClienteDetalleActivity", "Código: $codigoCliente, Nombre: $nombreCliente, Apellidos: $apellidosCliente, Género: $generoCliente")
-    }
-
-    //ACTUALIZAR CLIENTE
-    private fun actualizarCliente() {
-        // Validaciones en los datos del cliente
-        val codigoCliente = txtCodigoCliente.text.toString()
-        if (codigoCliente.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingrese el código del cliente", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val nombreCliente = txtNombreCliente.text.toString()
-        if (nombreCliente.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingrese el nombre del cliente", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val apellidosCliente = txtClienteApellidos.text.toString()
-        if (apellidosCliente.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingrese los apellidos del cliente", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val dniCliente = txtDNICliente.text.toString()
-        if (dniCliente.isEmpty() || dniCliente.length != 8 || !dniCliente.matches(Regex("\\d{8}"))) {
-            Toast.makeText(this, "Por favor, ingrese un DNI válido (exactamente 8 dígitos numéricos)", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val generoCliente = spnGeneroCliente.text.toString()
-        if (generoCliente.isEmpty()) {
-            Toast.makeText(this, "Por favor, seleccione un género", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val direccionCliente = txtDireccionCliente.text.toString()
-        if (direccionCliente.isEmpty()) {
-            Toast.makeText(this, "Por favor, ingrese la dirección del cliente", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Crear un objeto Cliente con los datos actualizados
-        val clienteActualizado = Cliente(
-            codigoCliente = codigoCliente.toInt(),
-            nombreCliente = nombreCliente,
-            apellidosCliente = apellidosCliente,
-            dniCliente = dniCliente.toInt(),
-            generoClie = generoCliente,
-            informacionCliente = direccionCliente
+        // Crear un objeto Cliente con los nuevos datos
+        val clienteModificado = Cliente(
+            id = clienteId,
+            nombres = nuevoNombre,
+            apellidos = nuevoApellido,
+            dni = nuevoDni,
+            genero = nuevoGenero,
+            correo = nuevoCorreo,
+            celular = nuevoCelular,
+            direccion = nuevaDireccion
         )
 
-        // Llamar a la API para actualizar el cliente
+        // Realizar la llamada a la API para modificar los datos
         CoroutineScope(Dispatchers.IO).launch {
-            val response = api.actualizarCliente(codigoCliente.toInt(), clienteActualizado)
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    // Mostrar un cuadro de diálogo atractivo
-                    AlertDialog.Builder(this@ClienteDetalleActivity)
-                        .setTitle("¡Éxito!")
-                        .setMessage("El cliente ha sido actualizado correctamente.")
-                        .setPositiveButton("Aceptar") { _, _ ->
-                            finish()
-                            regresarCliente()
-                        }
-                        .show()
-                } else {
-                    // Mostrar un mensaje de error si la actualización falla
-                    AlertDialog.Builder(this@ClienteDetalleActivity)
-                        .setTitle("Error")
-                        .setMessage("Hubo un problema al actualizar el cliente. Intenta nuevamente.\n${response.message()}")
-                        .setPositiveButton("Aceptar", null)
-                        .show()
+            try {
+                val response: Response<Cliente> = api.updateCliente(clienteModificado) // Asumiendo que tienes esta función en tu ApiService
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@ClienteDetalleActivity, "Cliente modificado exitosamente", Toast.LENGTH_SHORT).show()
+
+                        // Redirigir a la actividad ListaAnimalesActivity
+                        val intent = Intent(this@ClienteDetalleActivity, ListaClientesActivity::class.java)
+                        startActivity(intent) // Iniciar la actividad
+                        finish() // Opcional: Terminar esta actividad si no necesitas volver
+                    } else {
+                        Toast.makeText(this@ClienteDetalleActivity, "Error al modificar el cliente", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@ClienteDetalleActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
 
-
-    //ELIMINAR CLIENTES
-    private fun eliminarCliente() {
-        val codigoCliente = txtCodigoCliente.text.toString()
-
-        if (codigoCliente.isEmpty()) {
-            Toast.makeText(this@ClienteDetalleActivity, "Por favor, ingrese el código del cliente", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Mostrar un cuadro de diálogo de confirmación
+    // Función para borrar el cliente
+    private fun borrarCliente() {
+        // Confirmación antes de eliminar
         AlertDialog.Builder(this)
-            .setTitle("Confirmar eliminación")
+            .setTitle("Eliminar cliente")
             .setMessage("¿Estás seguro de que deseas eliminar este cliente?")
-            .setPositiveButton("Sí") { _, _ ->
-                // Proceder con la eliminación si el usuario confirma
+            .setPositiveButton("Sí") { dialog, which ->
+                // Realizar la llamada a la API para borrar el cliente
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val response: Response<Void> = api.eliminarCliente(codigoCliente.toInt())
+                        val response: Response<Void> = api.deleteCliente(clienteId) // Llamada DELETE para borrar el cliente
                         withContext(Dispatchers.Main) {
                             if (response.isSuccessful) {
-                                Toast.makeText(this@ClienteDetalleActivity, "Cliente eliminado con éxito", Toast.LENGTH_SHORT).show()
-                                setResult(RESULT_OK)
-                                regresarCliente()
+                                Toast.makeText(this@ClienteDetalleActivity, "Cliente eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+                                // Redirigir a la actividad ListaAnimalesActivity después de eliminar el cliente
+                                val intent = Intent(this@ClienteDetalleActivity, ListaAnimalesActivity::class.java)
+                                startActivity(intent) // Iniciar la actividad
+                                finish() // Opcional: Terminar esta actividad si no necesitas regresar a ella
                             } else {
                                 Toast.makeText(this@ClienteDetalleActivity, "Error al eliminar el cliente", Toast.LENGTH_SHORT).show()
                             }
-                        }
-                    } catch (e: NumberFormatException) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(this@ClienteDetalleActivity, "Código inválido", Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
@@ -232,8 +173,17 @@ class ClienteDetalleActivity : AppCompatActivity() {
                     }
                 }
             }
-            .setNegativeButton("No", null) // No hacer nada si el usuario cancela
+            .setNegativeButton("No", null)
             .show()
+    }
+
+
+
+
+    fun regresarCliente(){
+        val intent = Intent(this, ListaClientesActivity::class.java)
+        startActivity(intent)
+
     }
 
 }

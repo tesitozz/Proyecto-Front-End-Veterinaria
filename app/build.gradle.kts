@@ -17,6 +17,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packagingOptions {
+        // Excluir archivos de licencia para evitar conflictos
+        exclude ("META-INF/LICENSE.md")
+        exclude ("META-INF/LICENSE.txt")
+        exclude ("META-INF/NOTICE.txt")
+        exclude ("META-INF/NOTICE.md")  // Agregar la exclusión para NOTICE.md
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -26,14 +34,17 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
+
 
 dependencies {
 
@@ -51,5 +62,11 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    //Jakarta
+
+    implementation ("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    implementation ("org.hibernate:hibernate-core:6.2.15.Final") // Hibernate como proveedor de JPA
+
 
 }

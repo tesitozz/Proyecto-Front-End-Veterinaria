@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.proyecto.proyectoesfrt.R
 
-class ViewDoctor(vista: View): RecyclerView.ViewHolder(vista) {
+class ViewMedico(vista: View): RecyclerView.ViewHolder(vista) {
 
     var tvApiCodigoDoctor : TextView
     var tvApiNombreDoctor : TextView

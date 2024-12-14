@@ -10,13 +10,11 @@ class ViewAnimales(vista:View):RecyclerView.ViewHolder(vista) {
     //Atributos que irian en el Item_Animales
     var tvApiCodigoAnimal:TextView
     var tvApiNombreAnimal:TextView
-    var tvApiNombreDueno:TextView
 
     //Bloque Init
 
     init {
         tvApiCodigoAnimal=vista.findViewById(R.id.tvApiCodigoAnimal)
         tvApiNombreAnimal=vista.findViewById(R.id.tvApiNombreAnimal)
-        tvApiNombreDueno=vista.findViewById(R.id.tvApiNombreDueno)
     }
 }

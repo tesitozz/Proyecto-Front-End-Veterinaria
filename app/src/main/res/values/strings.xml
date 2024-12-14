@@ -34,19 +34,69 @@
     <string name="labelApellidosDoctor">Ingresa Apellidos del Doctor</string>
     <string name="labelDNI">Ingresa DNI del Doctor</string>
     <string name="labelGeneroDoctor">Ingresa Genero del Doctor</string>
-
     <string name="labelExperiencia">Ingresa Experiencia del Doctor</string>
     <string name="labelEspecialidad">Ingresa Especialidad del Doctor</string>
-    <string-array name="item_doctores">
-        <item>Exoticos</item>
-        <item>Gatos</item>
-        <item>Perros</item>
-    </string-array>
     <string-array name="item_experiencia">
         <item>1 año</item>
         <item>+4 años</item>
         <item>+10 años</item>
     </string-array>
 
+    //
+    <string name="labelcolorPerro">Ingresa Color del Animal</string>
+    <string-array name="label_color">
+        <item>Marron</item>
+        <item>Negro</item>
+        <item>Blanco</item>
+        <item>Gris</item>
+        <item>Naranja</item>
+        <item>Atigrado</item>
+        <item>Manchado</item>
+    </string-array>
+
+    //Tipo
+    <string name="labelTiposAnimal">Ingresa Tipo de Animal</string>
+    <string-array name="tipoAnimal">
+        <item>Perros</item>
+        <item>Gatos</item>
+        <item>Hamster</item>
+        <item>Cuyes</item>
+        <item>Gallinas</item>
+    </string-array>
+
+    //Raza
+    <string name="labelTipoRaza">Ingresa Raza del Animal</string>
+    <string-array name="tipoRazaAnimal">
+        <item>Pitbull</item>
+        <item>Labrador</item>
+        <item>Cruzados(Arian)</item>
+        <item>BullDog</item>
+        <item>Perro Aleman</item>
+    </string-array>
+    <string-array name="item_doctores">
+        <item>Exoticos</item>
+        <item>Gatos</item>
+        <item>Perros</item>
+    </string-array>
+
+    //Especialista
+
+    <string-array name="item_especialidadMedico">
+        <item>Analisis Clinicos</item>
+        <item>Medicina General</item>
+        <item>Oftalmologia</item>
+    </string-array>
+
+
+    //Clientes
+    <string name="labelGeneroCliente">Ingresa Genero del Cliente</string>
+    <string name="labelCorreoCliente">Ingresa Correo del Cliente</string>
+    <string name="labelNumeroCliente">Ingresa Numero de Celular del Cliente</string>
+    <string name="labelDireccionCliente">Ingresa Direccion del Cliente</string>
+
+    //Listar por todo los dni
+    <string-array name="spnDniListado">
+
+    </string-array>
 
 </resources>

@@ -14,22 +14,26 @@ import com.proyecto.proyectoesfrt.entidad.Cliente
 class ClienteAdapter(private  val context:Context, private val lista: List<Cliente>) :
 RecyclerView.Adapter<ClienteAdapter.ClienteViewHolder>(){
 
+
     inner class ClienteViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
         val tvApiCodigoCliente : TextView = itemView.findViewById(R.id.tvApiCodigoCliente)
         val tvApiNombreCliente : TextView = itemView.findViewById(R.id.tvApiNombreCliente)
-        val tvApiDniCliente : TextView = itemView.findViewById(R.id.tvApiDniCliente )
+        val tvApiDniCliente : TextView = itemView.findViewById(R.id.tvApiDniCliente)
 
         init {
             itemView.setOnClickListener{
                 val cliente = lista[adapterPosition]
                 val intent = Intent(context, ClienteDetalleActivity::class.java).apply {
-                    putExtra("CODIGO_CLIENTE", cliente.codigoCliente)
-                    putExtra("NOMBRE_CLIENTE", cliente.nombreCliente)
-                    putExtra("APELLIDOS_CLIENTE", cliente.apellidosCliente)
-                    putExtra("DNI_CLIENTE", cliente.dniCliente)
-                    putExtra("GENERO_CLIE", cliente.generoClie)
-                    putExtra("INFORMACION_CLIENTE", cliente.informacionCliente)
+                    putExtra("id", cliente.id ?: -1L)
+                    putExtra("nombres", cliente.nombres)
+                    putExtra("apellidos", cliente.apellidos)
+                    putExtra("dni", cliente.dni)
+                    putExtra("genero", cliente.genero)
+                    putExtra("correo", cliente.correo)
+                    putExtra("celular", cliente.celular)
+                    putExtra("direccion", cliente.direccion)
+
                 }
                 context.startActivity(intent)
             }
@@ -44,9 +48,9 @@ RecyclerView.Adapter<ClienteAdapter.ClienteViewHolder>(){
 
     override fun onBindViewHolder(holder: ClienteViewHolder, position: Int) {
         val cliente = lista[position]
-        holder.tvApiCodigoCliente.text = cliente.codigoCliente.toString()
-        holder.tvApiNombreCliente.text = cliente.nombreCliente
-        holder.tvApiDniCliente.text = cliente.dniCliente.toString()
+        holder.tvApiCodigoCliente.text = cliente.id?.toString() ?: "N/A" // Manejo de nulos
+        holder.tvApiNombreCliente.text = cliente.nombres
+        holder.tvApiDniCliente.text = cliente.dni.toString()
     }
 
     override fun getItemCount(): Int = lista.size

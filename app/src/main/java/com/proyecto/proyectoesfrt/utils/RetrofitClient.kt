@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.proyecto.proyectoesfrt.service.ApiServiceAnimal
 import com.proyecto.proyectoesfrt.service.ApiServiceCliente
-import com.proyecto.proyectoesfrt.service.ApiServiceDoctores
+import com.proyecto.proyectoesfrt.service.ApiServiceMedicos
 import com.proyecto.proyectoesfrt.service.ApiServiceLogeo
 
 object RetrofitClient {
@@ -29,8 +29,8 @@ object RetrofitClient {
     }
 
     // Servicio para clientes
-    val apiServiceDoctor: ApiServiceDoctores by lazy {
-        retrofit.create(ApiServiceDoctores::class.java)
+    val apiServiceDoctor: ApiServiceMedicos by lazy {
+        retrofit.create(ApiServiceMedicos::class.java)
     }
 
     // Servicio para Logeo

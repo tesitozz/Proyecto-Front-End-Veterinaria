@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.proyecto.proyectoesfrt.adaptador.AnimalesAdapter
 import com.proyecto.proyectoesfrt.adaptador.ClienteAdapter
 import com.proyecto.proyectoesfrt.api.RetrofitClient
+import com.proyecto.proyectoesfrt.entidad.Cliente
 import kotlinx.coroutines.launch
 
 class ListaClientesActivity : AppCompatActivity() {
@@ -69,21 +70,23 @@ class ListaClientesActivity : AppCompatActivity() {
     }
 
     private fun cargarClienteDesdeApi() {
-        // Llamada a la API
         lifecycleScope.launch {
-            val response = RetrofitClient.apiServiceCliente.getAllClientes()
-            if (response.isSuccessful) {
-                val clientesList = response.body() ?: emptyList()
-                val adaptador = ClienteAdapter(this@ListaClientesActivity, clientesList)
-                rvClientes.adapter = adaptador
-                rvClientes.layoutManager = LinearLayoutManager(this@ListaClientesActivity)
-            } else {
-                // Manejar errores de la respuesta
-                Log.e("ListaAnimalesActivity", "Error al cargar clientes: ${response.message()}")
-                Toast.makeText(this@ListaClientesActivity, "Error al cargar animales", Toast.LENGTH_SHORT).show()
+            try {
+                // Asegúrate de usar el nombre correcto del servicio
+                val response = RetrofitClient.apiServiceCliente.getAllClientes() // Llamada al API
+                if (response.isSuccessful) {
+                    val clientes = response.body() ?: emptyList() // Si la respuesta es exitosa, obtenemos la lista de clientes
+                    configurarRecyclerView(clientes) // Configuramos el RecyclerView con los clientes
+                } else {
+                    Toast.makeText(this@ListaClientesActivity, "Error al cargar clientes", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@ListaClientesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -91,4 +94,14 @@ class ListaClientesActivity : AppCompatActivity() {
             cargarClienteDesdeApi()
         }
     }
+
+    private fun configurarRecyclerView(clientes: List<Cliente>) {
+        // Crear el adaptador
+        val clienteAdapter = ClienteAdapter(this, clientes)
+
+        // Configurar el RecyclerView
+        rvClientes.layoutManager = LinearLayoutManager(this)
+        rvClientes.adapter = clienteAdapter
+    }
+
 }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.proyecto.proyectoesfrt.adaptador.AnimalesAdapter
 import com.proyecto.proyectoesfrt.api.RetrofitClient
+import com.proyecto.proyectoesfrt.entidad.Animal
 import kotlinx.coroutines.launch
 
 class ListaAnimalesActivity : AppCompatActivity() {
@@ -66,18 +67,23 @@ class ListaAnimalesActivity : AppCompatActivity() {
     }
 
     private fun cargarAnimalesDesdeApi() {
-        // Llamada a la API
+        // Realiza la solicitud para obtener la lista de animales
         lifecycleScope.launch {
-            val response = RetrofitClient.apiService.getAllAnimales()
-            if (response.isSuccessful) {
-                val animalesList = response.body() ?: emptyList()
-                val adaptador = AnimalesAdapter(this@ListaAnimalesActivity, animalesList)
-                rvAnimales.adapter = adaptador
-                rvAnimales.layoutManager = LinearLayoutManager(this@ListaAnimalesActivity)
-            } else {
-                // Manejar errores de la respuesta
-                Log.e("ListaAnimalesActivity", "Error al cargar animales: ${response.message()}")
-                Toast.makeText(this@ListaAnimalesActivity, "Error al cargar animales", Toast.LENGTH_SHORT).show()
+            try {
+                // Supón que tienes un método en tu cliente Retrofit para obtener todos los animales
+                val response = RetrofitClient.apiService.getAllAnimales()  // Este método debe estar en tu cliente Retrofit
+                if (response.isSuccessful && response.body() != null) {
+                    // Si la respuesta es exitosa, obtenemos la lista de animales
+                    val animales = response.body()!!
+
+                    // Actualiza el RecyclerView con la lista de animales
+                    actualizarRecyclerView(animales)
+                } else {
+                    Toast.makeText(this@ListaAnimalesActivity, "Error al cargar la lista de animales", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                // Maneja errores de red u otros problemas
+                Toast.makeText(this@ListaAnimalesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -88,5 +94,11 @@ class ListaAnimalesActivity : AppCompatActivity() {
             // Volver a cargar la lista de animales si se eliminó uno
             cargarAnimalesDesdeApi()
         }
+    }
+
+    // Método que actualiza el RecyclerView en la actividad
+    private fun actualizarRecyclerView(animales: List<Animal>) {
+        rvAnimales.layoutManager = LinearLayoutManager(this)
+        rvAnimales.adapter = AnimalesAdapter(this, animales)
     }
 }

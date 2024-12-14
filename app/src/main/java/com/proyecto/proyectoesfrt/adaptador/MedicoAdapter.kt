@@ -7,12 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.proyecto.proyectoesfrt.DoctorDetalleActivity
 import com.proyecto.proyectoesfrt.R
-import com.proyecto.proyectoesfrt.entidad.Doctor
+import com.proyecto.proyectoesfrt.entidad.Medico
 
-class DoctorAdapter(
+class MedicoAdapter(
     private val context: Context,
-    private val doctoresList: List<Doctor>
-) : RecyclerView.Adapter<DoctorAdapter.DoctorViewHolder>() {
+    private val doctoresList: List<Medico>
+) : RecyclerView.Adapter<MedicoAdapter.DoctorViewHolder>() {
 
     inner class DoctorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvApiCodigoDoctor: TextView = itemView.findViewById(R.id.tvApiCodigoDoctor)
@@ -25,12 +25,11 @@ class DoctorAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val doctor = doctoresList[position]
                     val intent = Intent(context, DoctorDetalleActivity::class.java).apply {
-                        putExtra("CODIGO_DOCTOR", doctor.codigoDoctor)
-                        putExtra("NOMBRE_DOCTOR", doctor.nombreDoctor)
-                        putExtra("APELLIDO_DOCTOR", doctor.apellidoDoctor)
-                        putExtra("DNI_DOCTOR", doctor.dniDoctor)
-                        putExtra("ESPECIALIDAD_DOCTOR", doctor.especialidad)
-                        putExtra("EXPERIENCIA_DOCTOR", doctor.experiencia)
+                        putExtra("id", doctor.id)
+                        putExtra("nombres", doctor.nombres)
+                        putExtra("apellidos", doctor.apellidos)
+                        putExtra("dni", doctor.dni)
+                        putExtra("especialidad", doctor.especialidad)
                     }
                     context.startActivity(intent)
                 }
@@ -46,9 +45,9 @@ class DoctorAdapter(
     override fun onBindViewHolder(holder: DoctorViewHolder, position: Int) {
 
         val doctor = doctoresList[position]
-        holder.tvApiCodigoDoctor.text = doctor.codigoDoctor.toString()
-        holder.tvApiNombreDoctor.text = doctor.nombreDoctor
-        holder.tvApiDNIDoctor.text = doctor.dniDoctor.toString()
+        holder.tvApiCodigoDoctor.text = doctor.id.toString()
+        holder.tvApiNombreDoctor.text = doctor.nombres
+        holder.tvApiDNIDoctor.text = doctor.dni.toString()
     }
 
 

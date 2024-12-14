@@ -16,15 +16,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.ProyectooExperiencias"
         tools:targetApi="31">
-        <activity
-            android:name=".Inicio_Sesion_Activity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -35,7 +28,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ListaDoctoresActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ListaAnimalesActivity"
             android:exported="true">
