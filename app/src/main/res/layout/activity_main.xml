@@ -51,16 +51,30 @@
             android:textStyle="bold"
             app:icon="@drawable/dog" />
 
+
         <Button
             android:id="@+id/btnDoctores"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="190dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/button_background"
             android:backgroundTint="@color/color1"
             android:text="Ir a Doctores"
             android:textStyle="bold"
             app:icon="@drawable/doctor" />
+
+        <Button
+            android:id="@+id/btnHistorialClinico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:background="@drawable/button_background"
+            android:backgroundTint="@color/color1"
+            android:text="Ir a Historiales"
+            android:textStyle="bold"
+            app:icon="@drawable/doctor" />
+
+
 
         <Button
             android:id="@+id/btnCerrarSesion"
@@ -69,6 +83,7 @@
             android:backgroundTint="@color/color6"
             android:text="Salir"
             app:icon="@drawable/close_circle" />
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

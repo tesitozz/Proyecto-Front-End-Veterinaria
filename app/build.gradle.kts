@@ -69,4 +69,9 @@ dependencies {
     implementation ("org.hibernate:hibernate-core:6.2.15.Final") // Hibernate como proveedor de JPA
 
 
+    //Fecha
+    implementation ("com.google.android.material:material:1.9.0")
+
+
+
 }

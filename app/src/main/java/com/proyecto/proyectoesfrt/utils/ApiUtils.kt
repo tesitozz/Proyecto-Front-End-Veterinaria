@@ -3,6 +3,7 @@
     import com.proyecto.proyectoesfrt.api.RetrofitClient
     import com.proyecto.proyectoesfrt.service.ApiServiceAnimal
     import com.proyecto.proyectoesfrt.service.ApiServiceCliente
+    import com.proyecto.proyectoesfrt.service.ApiServiceHistorial
     import com.proyecto.proyectoesfrt.service.ApiServiceMedicos
     import com.proyecto.proyectoesfrt.service.ApiServiceLogeo
 
@@ -24,6 +25,10 @@
 
             fun getApiLogeo() : ApiServiceLogeo{
                 return RetrofitClient.apiLogeoUsuario
+            }
+
+            fun getApiHistorial() : ApiServiceHistorial{
+                return RetrofitClient.apiServiceHistorial
             }
         }
     }

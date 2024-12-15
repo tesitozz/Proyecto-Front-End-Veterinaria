@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnClientes: Button
     private lateinit var btnDoctores: Button
     private lateinit var btnCerrarSesion: Button
+    private lateinit var btnHistorialClinico:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +30,18 @@ class MainActivity : AppCompatActivity() {
         btnClientes=findViewById(R.id.btnClientes)
         btnDoctores=findViewById(R.id.btnDoctores)
         btnCerrarSesion=findViewById(R.id.btnCerrarSesion)
+        btnHistorialClinico=findViewById(R.id.btnHistorialClinico)
+        btnHistorialClinico.setOnClickListener { irHistoriales() }
         btnClientes.setOnClickListener { irClientes() }
         btnAnimales.setOnClickListener { go() }
         btnDoctores.setOnClickListener { irDoctores() }
         btnCerrarSesion.setOnClickListener { cerrarSesion() }
+    }
+
+    fun irHistoriales(){
+        var intentClientes= Intent(this,ListaHistorialActivity::class.java)
+        startActivity(intentClientes)
+
     }
     fun irClientes(){
         var intentClientes= Intent(this,ListaClientesActivity::class.java)

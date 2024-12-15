@@ -69,7 +69,7 @@
     <string-array name="tipoRazaAnimal">
         <item>Pitbull</item>
         <item>Labrador</item>
-        <item>Cruzados(Arian)</item>
+        <item>Cruzados</item>
         <item>BullDog</item>
         <item>Perro Aleman</item>
     </string-array>
@@ -98,5 +98,25 @@
     <string-array name="spnDniListado">
 
     </string-array>
+
+    <string name="labelPropietario">Ingresa Nombre del Dueño</string>
+    <string name="labelApellido">Ingresa Apellido del Dueño</string>
+    <string name="labelDni">Ingresa DNI del Dueño</string>
+    <string name="labelTelefono">Ingresa Telefono del Dueño</string>
+    <string name="labelDireccionDuenio">Ingresa Direccion del Dueño</string>
+    <string name="labelCorreoDuenio">Ingresa Correo del Dueño</string>
+
+    //Historial Veterinario - Animal
+
+    <string name="labelHistorialNombreAnimal">Ingresa Nombre del Animal</string>
+    <string name="labelRazaAnimal">Ingresa Raza del Animal</string>
+    <string name="labelColorAnimal">Ingresa Color del Animal</string>
+    <string name="labelEspecieAnimal">Ingresa Especie del Animal</string>
+    <string name="labelHistorialPesoAnimal">Ingresa el Peso del Animal</string>
+
+    <string-array name="item_duenio_historial"></string-array>
+    <string-array name="item_animal_historial"></string-array>
+    <string-array name="item_medico_historial"></string-array>
+
 
 </resources>
