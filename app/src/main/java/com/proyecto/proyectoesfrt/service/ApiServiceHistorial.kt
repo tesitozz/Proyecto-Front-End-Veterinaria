@@ -21,59 +21,15 @@ interface ApiServiceHistorial {
     fun getAllHistoriaClinica(): retrofit2.Call<List<HistorialClinica>>
 
     @POST("/api/historias-clinicas/crear")
-    fun createHistoriaClinica(@Body historiaClinica: HistorialClinica): retrofit2.Call<HistorialClinica>
+    suspend fun createHistoriaClinica(@Body historiaClinica: HistorialClinica): Response<HistorialClinica>
 
-    @PUT("/api/historias-clinicas/actualizar/{id}")
-    suspend fun updateHistoriaClinica(
-        @Path("id") id: Long,  // Recibe el id de la URL
-        @Body historialClinica: HistorialClinica  // Recibe el objeto con los datos actualizados
-    ): HistorialClinica
 
-    @PUT("/api/historias-clinicas/actualizar-fecha-registro-de/{id}")
-    fun updateFechaRegistroHC(@Path("id") id: Long, @Body fechaDeRegistro: LocalDate): retrofit2.Call<HistorialClinica>
-
-    @PUT("/api/historias-clinicas/actualizar-hora-registro-de/{id}")
-    fun updateHoraRegistroHC(@Path("id") id: Long, @Body horaDeRegistro: LocalTime): retrofit2.Call<HistorialClinica>
-
-    @PUT("/api/historias-clinicas/actualizar-animal-de/{id}")
-    fun updateAnimalHC(@Path("id") id: Long, @Body animal: Animal): retrofit2.Call<HistorialClinica>
-
-    @PUT("/api/historias-clinicas/actualizar-cliente-de/{id}")
-    fun updateClienteHC(@Path("id") id: Long, @Body cliente: Cliente): retrofit2.Call<HistorialClinica>
-
-    @PUT("/api/historias-clinicas/actualizar-medico-de/{id}")
-    fun updateMedicoHC(@Path("id") id: Long, @Body medico: Medico): retrofit2.Call<HistorialClinica>
-
-    @GET("/api/historias-clinicas/buscar-por-id/{id}")
-    fun findByIDHC(@Path("id") id: Long): retrofit2.Call<HistorialClinica>
+    // Método para actualizar una historia clínica
+    @PUT("/api/historias-clinicas/actualizar")
+    fun updateHistoriaClinica(@Body historiaClinica: HistorialClinica): retrofit2.Call<HistorialClinica>
 
     @DELETE("/api/historias-clinicas/eliminar-por-id/{id}")
     fun deleteHistoriaClinica(@Path("id") id: Long): retrofit2.Call<Void>
 
-    @GET("/api/historias-clinicas/buscar-por-animal-id/{animalId}")
-    fun findByAnimalIdHC(@Path("animalId") animalId: Long): retrofit2.Call<List<HistorialClinica>>
 
-    @GET("/api/historias-clinicas/buscar-por-cliente-id/{clienteId}")
-    fun findByClienteIdHC(@Path("clienteId") clienteId: Long): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-medico-id/{medicoId}")
-    fun findByMedicoIdHC(@Path("medicoId") medicoId: Long): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-anio-fecha/{year}")
-    fun findByYearOfFechaDeRegistroHC(@Path("year") year: Int): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-mes-fecha/{month}")
-    fun findByMonthOfFechaDeRegistroHC(@Path("month") month: Int): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-hora-fecha/{hour}")
-    fun findByHourOfHoraDeRegistroHC(@Path("hour") hour: Int): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-minuto-fecha/{minute}")
-    fun findByMinuteOfHoraDeRegistroHC(@Path("minute") minute: Int): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-fecha/{fechaDeRegistro}")
-    fun findByFechaDeRegistroHC(@Path("fechaDeRegistro") fechaDeRegistro: LocalDate): retrofit2.Call<List<HistorialClinica>>
-
-    @GET("/api/historias-clinicas/buscar-por-hora/{horaDeRegistro}")
-    fun findByHoraDeRegistroHC(@Path("horaDeRegistro") horaDeRegistro: LocalTime): retrofit2.Call<List<HistorialClinica>>
 }

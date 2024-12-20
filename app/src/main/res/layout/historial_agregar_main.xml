@@ -60,6 +60,7 @@
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+
                 <!-- Campo de la derecha -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textFieldDerecha"
@@ -77,7 +78,81 @@
                         android:hint="Seleccionar hora"
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+
             </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelDiagnostico"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtDiagnosticoHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdasd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelTratamientoHistorial"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtTratamientoHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdsadd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelVacunasAplicadas"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtVacunasAplicadasHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdasds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/laveObservacionesAnimal"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtObservacionesHistorial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
 
             <!-- Primer campo -->
             <TextView
@@ -98,7 +173,7 @@
 
                 <AutoCompleteTextView
                     android:id="@+id/spnDuenioListarHistorial"
-                    android:layout_width="371dp"
+                    android:layout_width="358dp"
                     android:layout_height="52dp"
                     android:inputType="none"
                     app:simpleItems="@array/item_duenio_historial" />
@@ -214,7 +289,7 @@
 
                 <AutoCompleteTextView
                     android:id="@+id/spnAnimalRegistrar"
-                    android:layout_width="371dp"
+                    android:layout_width="360dp"
                     android:layout_height="52dp"
                     android:inputType="none"
                     app:simpleItems="@array/item_animal_historial" />
@@ -344,14 +419,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:hint="@string/labelNombreDoctor">
+                    android:hint="@string/labelDniMedico">
 
                     <AutoCompleteTextView
                         android:id="@+id/spnMedicoHistorialRegistrar"
-                        android:layout_width="371dp"
+                        android:layout_width="356dp"
                         android:layout_height="52dp"
                         android:inputType="none"
-                        app:simpleItems="@array/item_medico_historial" />
+                        app:simpleItems="@array/item_medico_dni_historial" />
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -359,16 +434,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="@string/labelApellidosDoctor"
                     app:endIconMode="clear_text"
 
                     app:startIconDrawable="@drawable/account">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/txtApellidoMedicoHistorial"
+                        android:id="@+id/txtNombresyApellidosMedicoHistorial"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="25dp"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/labelCorreo"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/account">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtCorreoMedicoHistorial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/labelTelefonoMed"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/account">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtTelefonoMedicoHistorial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 

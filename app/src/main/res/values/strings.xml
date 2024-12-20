@@ -116,7 +116,31 @@
 
     <string-array name="item_duenio_historial"></string-array>
     <string-array name="item_animal_historial"></string-array>
-    <string-array name="item_medico_historial"></string-array>
+    <string-array name="item_medico_dni_historial"></string-array>
+
+
+
+    //
+    <string name="labelCorreo">Ingrersa Correo del Medico</string>
+    <string name="labelTelefonoMed">Ingrersa Telefono del Medico</string>
+
+    <string name="labelGeneroMed">Ingrersa Genero del Medico</string>
+
+    <string-array name="genero_items">
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+
+    <string name="labelDniMedico">Ingresa DNI del Medico</string>
+
+    <string name="labelDiagnostico">Ingresa Diagnostico del Animal</string>
+
+    <string name="labelTratamientoHistorial">Ingresa Tratamiento del Animal</string>
+
+    <string name="labelVacunasAplicadas">Ingresa Vacunas Aplicadas del Animal</string>
+
+    <string name="laveObservacionesAnimal">Ingresa Observaciones del Animal</string>
+
 
 
 </resources>

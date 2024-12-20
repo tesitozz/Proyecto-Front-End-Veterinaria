@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -16,21 +17,31 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.appproyecto.utils.ApiUtils
 import com.google.android.material.textfield.TextInputEditText
+import com.proyecto.proyectoesfrt.api.RetrofitClient
 import com.proyecto.proyectoesfrt.entidad.Animal
 import com.proyecto.proyectoesfrt.entidad.Cliente
 import com.proyecto.proyectoesfrt.entidad.HistorialClinica
 import com.proyecto.proyectoesfrt.entidad.Medico
+import com.proyecto.proyectoesfrt.service.ApiServiceAnimal
+import com.proyecto.proyectoesfrt.service.ApiServiceCliente
 import com.proyecto.proyectoesfrt.service.ApiServiceMedicos
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Response
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import javax.security.auth.callback.Callback
 
 class AgregarHistorialActivity : AppCompatActivity() {
-
     private lateinit var txtFechaRegistoHistorial: TextInputEditText
     private lateinit var txtHoraRegistroHistorial: TextInputEditText
+
+    private lateinit var txtDiagnosticoHistorial:TextView
+    private lateinit var txtTratamientoHistorial:TextView
+    private lateinit var txtVacunasAplicadasHistorial:TextView
+    private lateinit var txtObservacionesHistorial:TextView
 
     // Duenio
     private lateinit var spnDuenioListarHistorial: AutoCompleteTextView
@@ -51,18 +62,24 @@ class AgregarHistorialActivity : AppCompatActivity() {
 
     // Doctor
     private lateinit var spnMedicoHistorialRegistrar: AutoCompleteTextView
-    private lateinit var txtApellidoMedicoHistorial: TextView
+    private lateinit var txtNombresyApellidosMedicoHistorial: TextView
+    private lateinit var txtCorreoMedicoHistorial: TextView
+    private lateinit var txtTelefonoMedicoHistorial: TextView
 
     // Botones
     private lateinit var btnRegistrarHistorialMedico: Button
     private lateinit var btnVolverRegistrarHistorial: Button
 
-    // Variables para almacenar los datos obtenidos
+    // API
+    private lateinit var api: ApiServiceMedicos
+    private lateinit var apis: ApiServiceAnimal
+    private lateinit var api1: ApiServiceCliente
+
     private var dueniosList = mutableListOf<Cliente>()
     private var animalesList = mutableListOf<Animal>()
     private var medicosList = mutableListOf<Medico>()
 
-    // API
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.historial_agregar_main)
@@ -70,14 +87,16 @@ class AgregarHistorialActivity : AppCompatActivity() {
         // Inicialización de vistas
         txtFechaRegistoHistorial = findViewById(R.id.txtFechaRegistoHistorial)
         txtHoraRegistroHistorial = findViewById(R.id.txtHoraRegistroHistorial)
-
+        txtDiagnosticoHistorial = findViewById(R.id.txtDiagnosticoHistorial)
+        txtTratamientoHistorial = findViewById(R.id.txtTratamientoHistorial)
+        txtVacunasAplicadasHistorial = findViewById(R.id.txtVacunasAplicadasHistorial)
+        txtObservacionesHistorial = findViewById(R.id.txtObservacionesHistorial)
         spnDuenioListarHistorial = findViewById(R.id.spnDuenioListarHistorial)
         txtApellidoDuenioRegistroHistorial = findViewById(R.id.txtApellidoDuenioRegistroHistorial)
         txtDniDuenoRegistroHistorial = findViewById(R.id.txtDniDuenoRegistroHistorial)
         txtCorreoDuenioRegistroHistorial = findViewById(R.id.txtCorreoDuenioRegistroHistorial)
         txtTelefonoDuenioRegistroHistorial = findViewById(R.id.txtTelefonoDuenioRegistroHistorial)
         txtDireccionDuenoRegistroHistorial = findViewById(R.id.txtDireccionDuenoRegistroHistorial)
-
         spnAnimalRegistrar = findViewById(R.id.spnAnimalRegistrar)
         txtTipoAnimalRegistrar = findViewById(R.id.txtTipoAnimalRegistrar)
         txtGeneroAnimalHistorialRegistrar = findViewById(R.id.txtGeneroAnimalHistorialRegistrar)
@@ -85,43 +104,22 @@ class AgregarHistorialActivity : AppCompatActivity() {
         txtPesoAnimalHistorial = findViewById(R.id.txtPesoAnimalHistorial)
         txtRazaAnimalRegistrarHistorial = findViewById(R.id.txtRazaAnimalRegistrarHistorial)
         txtColorAnimalRegistrar = findViewById(R.id.txtColorAnimalRegistrar)
-
         spnMedicoHistorialRegistrar = findViewById(R.id.spnMedicoHistorialRegistrar)
-        txtApellidoMedicoHistorial = findViewById(R.id.txtApellidoMedicoHistorial)
+        txtNombresyApellidosMedicoHistorial = findViewById(R.id.txtNombresyApellidosMedicoHistorial)
+        txtCorreoMedicoHistorial = findViewById(R.id.txtCorreoMedicoHistorial)
+        txtTelefonoMedicoHistorial = findViewById(R.id.txtTelefonoMedicoHistorial)
 
         btnRegistrarHistorialMedico = findViewById(R.id.btnRegistrarHistorialMedico)
         btnVolverRegistrarHistorial = findViewById(R.id.btnVolverRegistrarHistorial)
 
-        btnRegistrarHistorialMedico.setOnClickListener { registrarHistorialMedico() }
-        btnVolverRegistrarHistorial.setOnClickListener { volverHistorial() }
+        api = ApiUtils.getApiDoctor()
+        apis = ApiUtils.getApiAnimal()
+        api1 = ApiUtils.getApiCliente()
 
-        // Llamadas a las APIs para obtener los datos
         obtenerDatos()
 
-        // Configurar el AutoCompleteTextView
-        spnDuenioListarHistorial.setOnItemClickListener { parent, view, position, id ->
-            val duenioSeleccionado = dueniosList[position]
-            txtApellidoDuenioRegistroHistorial.text = duenioSeleccionado.apellidos
-            txtDniDuenoRegistroHistorial.text = duenioSeleccionado.dni
-            txtCorreoDuenioRegistroHistorial.text = duenioSeleccionado.correo
-            txtTelefonoDuenioRegistroHistorial.text = duenioSeleccionado.celular
-            txtDireccionDuenoRegistroHistorial.text = duenioSeleccionado.direccion
-        }
-
-        spnAnimalRegistrar.setOnItemClickListener { parent, view, position, id ->
-            val animalSeleccionado = animalesList[position]
-            txtTipoAnimalRegistrar.text = animalSeleccionado.tipo
-            txtGeneroAnimalHistorialRegistrar.text = animalSeleccionado.genero
-            txtEdadAnimalRegistrarHistorial.text = animalSeleccionado.edad.toString()
-            txtRazaAnimalRegistrarHistorial.text = animalSeleccionado.raza
-            txtPesoAnimalHistorial.text = animalSeleccionado.peso.toString()
-            txtColorAnimalRegistrar.text = animalSeleccionado.color
-        }
-
-        spnMedicoHistorialRegistrar.setOnItemClickListener { parent, view, position, id ->
-            val medicoSeleccionado = medicosList[position]
-            txtApellidoMedicoHistorial.text = medicoSeleccionado.apellidos
-        }
+        btnRegistrarHistorialMedico.setOnClickListener { registrarHistorialMedico() }
+        btnVolverRegistrarHistorial.setOnClickListener { volverHistorial() }
 
         txtFechaRegistoHistorial.setOnClickListener {
             fechaRegistroHistorial()
@@ -131,9 +129,22 @@ class AgregarHistorialActivity : AppCompatActivity() {
             horaRegistroHistorial()
         }
 
+        spnDuenioListarHistorial.setOnItemClickListener { _, _, position, _ ->
+            val clienteSeleccionado = dueniosList[position]
+            // Usa clienteSeleccionado
+        }
+
+        spnAnimalRegistrar.setOnItemClickListener { _, _, position, _ ->
+            val animalSeleccionado = animalesList[position]
+            // Usa animalSeleccionado
+        }
+
+        spnMedicoHistorialRegistrar.setOnItemClickListener { _, _, position, _ ->
+            val medicoSeleccionado = medicosList[position]
+        }
+
     }
 
-    // La función que maneja la selección de la fecha
     fun fechaRegistroHistorial() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -152,7 +163,6 @@ class AgregarHistorialActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-    // La función que maneja la selección de la hora
     fun horaRegistroHistorial() {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -170,14 +180,13 @@ class AgregarHistorialActivity : AppCompatActivity() {
         timePickerDialog.show()
     }
 
-
     private fun obtenerDatos() {
         lifecycleScope.launch {
             try {
                 // Llamadas a las APIs para obtener las listas de datos
-                val responseDuenios = ApiUtils.getApiCliente().getAllClientes()
-                val responseAnimales = ApiUtils.getApiAnimal().getAllAnimales()
-                val responseMedicos = ApiUtils.getApiDoctor().getAllMedicos()
+                val responseDuenios = api1.getAllClientes()
+                val responseAnimales = apis.getAllAnimals()
+                val responseMedicos = api.getAllMedicos()
 
                 // Verificar si las respuestas fueron exitosas
                 if (responseDuenios.isSuccessful && responseAnimales.isSuccessful && responseMedicos.isSuccessful) {
@@ -191,7 +200,7 @@ class AgregarHistorialActivity : AppCompatActivity() {
                         animalesList = animalesResponse.toMutableList()
                         medicosList = medicosResponse.toMutableList()
 
-                        // Configurar los adaptadores para cada spinner
+                        // Configurar los adaptadores para cada AutoCompleteTextView
                         val duenioAdapter = ArrayAdapter(
                             this@AgregarHistorialActivity,
                             android.R.layout.simple_dropdown_item_1line,
@@ -213,6 +222,37 @@ class AgregarHistorialActivity : AppCompatActivity() {
                         )
                         spnMedicoHistorialRegistrar.setAdapter(medicoAdapter)
 
+                        // Listener para Duenio
+                        spnDuenioListarHistorial.setOnItemClickListener { parent, view, position, id ->
+                            val cliente = dueniosList[position]
+                            txtApellidoDuenioRegistroHistorial.text = cliente.apellidos
+                            txtDniDuenoRegistroHistorial.text = cliente.dni
+                            txtCorreoDuenioRegistroHistorial.text = cliente.correo
+                            txtTelefonoDuenioRegistroHistorial.text = cliente.celular
+                            txtDireccionDuenoRegistroHistorial.text = cliente.direccion
+                        }
+
+                        // Listener para Animal
+                        spnAnimalRegistrar.setOnItemClickListener { parent, view, position, id ->
+                            val animal = animalesList[position]
+                            txtTipoAnimalRegistrar.text = animal.tipo
+                            txtGeneroAnimalHistorialRegistrar.text = animal.genero
+                            txtEdadAnimalRegistrarHistorial.text = animal.edad.toString()
+                            txtPesoAnimalHistorial.text = animal.peso.toString()
+                            txtRazaAnimalRegistrarHistorial.text = animal.raza
+                            txtColorAnimalRegistrar.text = animal.color
+                        }
+
+                        // Listener para Medico
+                        spnMedicoHistorialRegistrar.setOnItemClickListener { parent, view, position, id ->
+                            val medico = medicosList[position]
+                            // Concatenamos nombres y apellidos
+                            txtNombresyApellidosMedicoHistorial.text = "${medico.nombres} ${medico.apellidos}"
+                            txtCorreoMedicoHistorial.text = medico.correo
+                            txtTelefonoMedicoHistorial.text = medico.celular
+                        }
+
+
                     } else {
                         Toast.makeText(this@AgregarHistorialActivity, "Error: Datos incompletos", Toast.LENGTH_SHORT).show()
                     }
@@ -226,83 +266,69 @@ class AgregarHistorialActivity : AppCompatActivity() {
     }
 
     fun registrarHistorialMedico() {
-        // Obtener los datos del formulario
-        val fecha = txtFechaRegistoHistorial.text.toString()
-        val hora = txtHoraRegistroHistorial.text.toString()
-
-        // Validar que los campos no estén vacíos
-        if (fecha.isEmpty() || hora.isEmpty()) {
+        // Validación de campos requeridos
+        if (txtFechaRegistoHistorial.text.isNullOrEmpty() ||
+            txtHoraRegistroHistorial.text.isNullOrEmpty() ||
+            txtDiagnosticoHistorial.text.isNullOrEmpty() ||
+            txtTratamientoHistorial.text.isNullOrEmpty() ||
+            txtVacunasAplicadasHistorial.text.isNullOrEmpty() ||
+            txtObservacionesHistorial.text.isNullOrEmpty() ||
+            spnDuenioListarHistorial.text.isNullOrEmpty() ||
+            spnAnimalRegistrar.text.isNullOrEmpty() ||
+            spnMedicoHistorialRegistrar.text.isNullOrEmpty()
+        ) {
             Toast.makeText(this, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Convertir la fecha a LocalDate
-        val localDate = try {
-            LocalDate.parse(fecha) // Si la fecha tiene el formato adecuado: "YYYY-MM-DD"
-        } catch (e: Exception) {
-            Toast.makeText(this, "Formato de fecha no válido", Toast.LENGTH_SHORT).show()
+        // Obtener los datos de las vistas
+        val fechaRegistro = txtFechaRegistoHistorial.text.toString()
+        val horaRegistro = txtHoraRegistroHistorial.text.toString()
+        val diagnostico = txtDiagnosticoHistorial.text.toString()
+        val tratamiento = txtTratamientoHistorial.text.toString()
+        val vacunasAplicadas = txtVacunasAplicadasHistorial.text.toString()
+        val observaciones = txtObservacionesHistorial.text.toString()
+
+        // Obtener los datos del dueño seleccionado
+        val duenioSeleccionado = dueniosList.find { it.nombres == spnDuenioListarHistorial.text.toString() }
+        val animalSeleccionado = animalesList.find { it.nombre == spnAnimalRegistrar.text.toString() }
+        val medicoSeleccionado = medicosList.find { it.nombres == spnMedicoHistorialRegistrar.text.toString() }
+
+        // Verificar que se haya seleccionado un dueño, un animal y un médico
+        if (duenioSeleccionado == null || animalSeleccionado == null || medicoSeleccionado == null) {
+            Toast.makeText(this, "No se pudo encontrar el dueño, animal o médico seleccionado", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Convertir la hora a LocalTime
-        val localTime = try {
-            // Si la hora tiene el formato adecuado: "HH:mm", se le agregan los segundos automáticamente.
-            if (hora.length == 5) {
-                LocalTime.parse(hora + ":00") // Añadimos los segundos automáticamente
-            } else {
-                LocalTime.parse(hora) // Si ya tiene el formato "HH:mm:ss", la parseamos directamente
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Formato de hora no válido", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Convertir LocalDate a String (si se requiere un String en lugar de LocalDate)
-        val fechaString = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-        // Obtener el cliente, animal y médico seleccionado
-        val duenioSeleccionado = spnDuenioListarHistorial.text.toString()
-        val animalSeleccionado = spnAnimalRegistrar.text.toString()
-        val medicoSeleccionado = spnMedicoHistorialRegistrar.text.toString()
-
-        val duenio = dueniosList.find { it.nombres == duenioSeleccionado }
-        val animal = animalesList.find { it.nombre == animalSeleccionado }
-        val medico = medicosList.find { it.nombres == medicoSeleccionado }
-
-        if (duenio == null || animal == null || medico == null) {
-            Toast.makeText(this, "Selecciona un dueño, un animal y un médico válidos", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Crear el objeto HistorialClinica con fechaString
+        // Crear el objeto HistorialClinica con los datos obtenidos
         val historialClinica = HistorialClinica(
-            fechaDeRegistro = localDate,
-            horaDeRegistro = localTime,
-            animal = animal,
-            cliente = duenio,
-            medico = medico
+            fechaDeRegistro = fechaRegistro,
+            horaDeRegistro = horaRegistro,
+            diagnostico = diagnostico,
+            tratamiento = tratamiento,
+            vacunasAplicadas = vacunasAplicadas,
+            observaciones = observaciones,
+            cliente = duenioSeleccionado,
+            animal = animalSeleccionado,
+            medico = medicoSeleccionado
         )
+        lifecycleScope.launch {
+            try {
+                // Llamada a la API para registrar el historial
+                val response = RetrofitClient.apiServiceHistorial.createHistoriaClinica(historialClinica)
 
-        // Llamar a la API para registrar el historial clínico
-        ApiUtils.getApiHistorial().createHistoriaClinica(historialClinica).enqueue(object : retrofit2.Callback<HistorialClinica> {
-            override fun onResponse(call: retrofit2.Call<HistorialClinica>, response: retrofit2.Response<HistorialClinica>) {
                 if (response.isSuccessful) {
-                    // Si la respuesta es exitosa
-                    Toast.makeText(this@AgregarHistorialActivity, "Historial clínico registrado correctamente", Toast.LENGTH_SHORT).show()
-                    finish() // O navegar a otra actividad
+                    Toast.makeText(this@AgregarHistorialActivity, "Historial registrado exitosamente", Toast.LENGTH_SHORT).show()
+                    // Opcional: Volver a la pantalla anterior o limpiar los campos
+                    finish()
                 } else {
-                    // Si la respuesta no fue exitosa
-                    Toast.makeText(this@AgregarHistorialActivity, "Error al registrar historial clínico", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AgregarHistorialActivity, "Error al registrar el historial", Toast.LENGTH_SHORT).show()
                 }
+            } catch (e: Exception) {
+                Toast.makeText(this@AgregarHistorialActivity, "Excepción: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-
-            override fun onFailure(call: retrofit2.Call<HistorialClinica>, t: Throwable) {
-                // En caso de error en la llamada
-                Toast.makeText(this@AgregarHistorialActivity, "Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
     }
-
 
     fun volverHistorial() {
         finish()

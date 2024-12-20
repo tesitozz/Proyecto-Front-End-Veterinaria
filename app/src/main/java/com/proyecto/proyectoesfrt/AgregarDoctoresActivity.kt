@@ -21,6 +21,9 @@ class AgregarDoctoresActivity : AppCompatActivity() {
     private lateinit var txtNombreDoctoresRegistrar : TextView
     private lateinit var txtDoctoresApellidosRegistrar : TextView
     private lateinit var txtDNIDoctoresRegistrar : TextView
+    private lateinit var txtCorreoDoctoresRegistrar:TextView
+    private lateinit var txtTelefonoDoctoresRegistrar:TextView
+    private lateinit var spnGeneroMedicoRegistrar:AutoCompleteTextView
     private lateinit var spnEspecialidadDocRegistrar : AutoCompleteTextView
     private lateinit var btnGrabarDoctorRegistrar : Button
     private lateinit var btnRegresarDoctorRegistrar  : Button
@@ -43,6 +46,9 @@ class AgregarDoctoresActivity : AppCompatActivity() {
         txtNombreDoctoresRegistrar=findViewById(R.id.txtNombreDoctoresRegistrar)
         txtDoctoresApellidosRegistrar=findViewById(R.id.txtDoctoresApellidosRegistrar)
         txtDNIDoctoresRegistrar=findViewById(R.id.txtDNIDoctoresRegistrar)
+        txtCorreoDoctoresRegistrar=findViewById(R.id.txtCorreoDoctoresRegistrar)
+        txtTelefonoDoctoresRegistrar=findViewById(R.id.txtTelefonoDoctoresRegistrar)
+        spnGeneroMedicoRegistrar=findViewById(R.id.spnGeneroMedicoRegistrar)
         spnEspecialidadDocRegistrar=findViewById(R.id.spnEspecialidadDocRegistrar)
         btnGrabarDoctorRegistrar = findViewById(R.id.btnGrabarDoctorRegistrar)
         btnRegresarDoctorRegistrar = findViewById(R.id.btnRegresarDoctorRegistrar)
@@ -55,44 +61,48 @@ class AgregarDoctoresActivity : AppCompatActivity() {
     }
 
     fun registrarMedico() {
-        // Obtener los valores desde los campos de entrada
-        val nombre = txtNombreDoctoresRegistrar.text.toString().trim()
-        val apellidos = txtDoctoresApellidosRegistrar.text.toString().trim()
-        val dni = txtDNIDoctoresRegistrar.text.toString().trim()
-        val especialidad = spnEspecialidadDocRegistrar.text.toString().trim()
+        val nombre = txtNombreDoctoresRegistrar.text.toString()
+        val apellidos = txtDoctoresApellidosRegistrar.text.toString()
+        val dni = txtDNIDoctoresRegistrar.text.toString()
+        val correo = txtCorreoDoctoresRegistrar.text.toString()
+        val celular = txtTelefonoDoctoresRegistrar.text.toString()
+        val genero = spnGeneroMedicoRegistrar.text.toString()
+        val especialidad = spnEspecialidadDocRegistrar.text.toString()
 
-        // Validar los campos
-        if (nombre.isEmpty() || apellidos.isEmpty() || dni.isEmpty() || especialidad.isEmpty()) {
-            // Mostrar un mensaje de error si algún campo está vacío
-            Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
+        // Validate the inputs
+        if (nombre.isBlank() || apellidos.isBlank() || dni.isBlank() || correo.isBlank() || celular.isBlank() || genero.isBlank() || especialidad.isBlank()) {
+            Toast.makeText(this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Crear un objeto Medico con los datos obtenidos
         val medico = Medico(
             nombres = nombre,
             apellidos = apellidos,
             dni = dni,
+            genero = genero,
+            correo = correo,
+            celular = celular,
             especialidad = especialidad
         )
 
-        // Realizar la solicitud para registrar al médico
+        // Make the API call to register the doctor
         lifecycleScope.launch {
             try {
                 val response = api.createMedico(medico)
+
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AgregarDoctoresActivity, "Médico registrado con éxito", Toast.LENGTH_SHORT).show()
-                    // Regresar a la pantalla anterior o realizar alguna acción
-                    finish()
-                regresarMedico()// Cierra la actividad actual y vuelve a la anterior
+                    Toast.makeText(this@AgregarDoctoresActivity, "Médico registrado correctamente", Toast.LENGTH_SHORT).show()
+                    // Redirect to the list of doctors
+                    regresarMedico()
                 } else {
-                    Toast.makeText(this@AgregarDoctoresActivity, "Error al registrar el médico", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AgregarDoctoresActivity, "Error al registrar el médico: ${response.message()}", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@AgregarDoctoresActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AgregarDoctoresActivity, "Error en la conexión: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
 
     fun regresarMedico(){

@@ -33,13 +33,6 @@
 
         private lateinit var spnRazaAnimalAgregar: AutoCompleteTextView
 
-        //Estos 2 - CLIENTE
-        private lateinit var spnListarDniClientesAnimales:AutoCompleteTextView
-
-        private lateinit var txtNombreCargarDatos:TextView
-
-
-
         private lateinit var btnRegistrarAnimalAgregar : Button
 
         private lateinit var btnRegresarAnimalAgregar:Button
@@ -64,8 +57,6 @@
             txtPesoAnimalAgregar = findViewById(R.id.txtPesoAnimalAgregar)
             spnColorAnimalAgregar = findViewById(R.id.spnColorAnimalAgregar)
             spnTipoAnimalRegistrar = findViewById(R.id.spnTipoAnimalRegistrar)
-            spnListarDniClientesAnimales = findViewById(R.id.spnListarDniClientesAnimales)
-            txtNombreCargarDatos = findViewById(R.id.txtNombreCargarDatos)
             spnRazaAnimalAgregar = findViewById(R.id.spnRazaAnimalAgregar)
             btnRegresarAnimalAgregar = findViewById(R.id.btnRegresarAnimalAgregar)
             btnRegistrarAnimalAgregar = findViewById(R.id.btnRegistrarAnimalAgregar)
@@ -77,135 +68,60 @@
 
             api = ApiUtils.getApiAnimal()
 
-            cargarDniClientes()
-
 
         }
 
         private fun registrarAnimalApi() {
+            // Obtener los datos de los campos del formulario
             val nombre = txtNombreAnimalAgregar.text.toString()
-            val tipo = spnTipoAnimalRegistrar.text.toString()
-            val genero = spnColorAnimalAgregar.text.toString() // Puedes agregar un spinner para género si corresponde
-            val edadText = txtEdadAnimalAgregar.text.toString()
-            val pesoText = txtPesoAnimalAgregar.text.toString()
-            val raza = spnRazaAnimalAgregar.text.toString()
+            val edad = txtEdadAnimalAgregar.text.toString().toIntOrNull()
+            val peso = txtPesoAnimalAgregar.text.toString().toDoubleOrNull()
             val color = spnColorAnimalAgregar.text.toString()
-            val dniCliente = spnListarDniClientesAnimales.text.toString()
+            val tipo = spnTipoAnimalRegistrar.text.toString()
+            val raza = spnRazaAnimalAgregar.text.toString()
 
-            // Validaciones
-            if (nombre.isEmpty() || tipo.isEmpty() || genero.isEmpty() ||
-                edadText.isEmpty() || pesoText.isEmpty() || dniCliente.isEmpty()) {
-                Toast.makeText(this, "Por favor, completa todos los campos obligatorios", Toast.LENGTH_SHORT).show()
+            // Verificar que los campos obligatorios no estén vacíos
+            if (nombre.isEmpty() || edad == null || peso == null || color.isEmpty() || tipo.isEmpty()) {
+                Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            val edad = edadText.toIntOrNull()
-            val peso = pesoText.toDoubleOrNull()
+            // Crear el objeto Animal
+            val animal = Animal(
+                id = null, // El ID será generado por el backend
+                nombre = nombre,
+                tipo = tipo,
+                genero = "", // Si es necesario agregar genero, obtenerlo de otro campo
+                edad = edad,
+                peso = peso,
+                raza = raza,
+                color = color
+            )
 
-            if (edad == null || peso == null) {
-                Toast.makeText(this, "Edad y peso deben ser valores válidos", Toast.LENGTH_SHORT).show()
-                return
-            }
-
+            // Llamar a la API para registrar el animal
             lifecycleScope.launch {
                 try {
-                    // Obtener el cliente por DNI
-                    val clienteResponse = ApiUtils.getApiCliente().getClienteByDni(dniCliente)
-                    if (clienteResponse.isSuccessful && clienteResponse.body() != null) {
-                        val cliente = clienteResponse.body()!!
-
-                        // Crear el objeto Animal
-                        val animal = Animal(
-                            id = null, // El backend asignará el ID
-                            nombre = nombre,
-                            tipo = tipo,
-                            genero = genero,
-                            edad = edad,
-                            peso = peso,
-                            raza = if (raza.isEmpty()) null else raza,
-                            color = if (color.isEmpty()) null else color,
-                            cliente = cliente
-                        )
-
-                        // Registrar el animal
-                        registrarAnimalEnApi(animal)
-                    } else {
-                        Toast.makeText(this@AgregarAnimalesActivity, "Cliente no encontrado", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(this@AgregarAnimalesActivity, "Error al obtener cliente: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-
-        fun registrarAnimalEnApi(animal: Animal) {
-            lifecycleScope.launch {
-                try {
-                    // Hacer la llamada a la API para registrar el animal
+                    // Realizar la solicitud a la API
                     val response = api.createAnimal(animal)
 
-                    // Verificar si la respuesta fue exitosa
+                    // Verificar la respuesta de la API
                     if (response.isSuccessful) {
-                        // Mostrar un mensaje de éxito
-                        Toast.makeText(this@AgregarAnimalesActivity, "Animal registrado con éxito", Toast.LENGTH_SHORT).show()
-                        // Puedes redirigir a otra actividad si es necesario
-                        val intent = Intent(this@AgregarAnimalesActivity, MainActivity::class.java)
-                        startActivity(intent)
+                        val registradoAnimal = response.body()
+                        if (registradoAnimal != null) {
+                            // Animal registrado exitosamente
+                            Toast.makeText(this@AgregarAnimalesActivity, "Animal registrado correctamente", Toast.LENGTH_SHORT).show()
+                            regresarAnimal() // Regresar a la lista de animales
+                        }
                     } else {
-                        // Mostrar un mensaje de error si la respuesta no es exitosa
+                        // Error en la respuesta
                         Toast.makeText(this@AgregarAnimalesActivity, "Error al registrar el animal", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    // Manejar cualquier error de red o excepción
-                    Toast.makeText(this@AgregarAnimalesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    // Capturar cualquier error en la solicitud
+                    Toast.makeText(this@AgregarAnimalesActivity, "Error en la solicitud: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
-        private fun cargarDniClientes() {
-            val apiCliente = ApiUtils.getApiCliente() // Asegúrate de tener este método
-            lifecycleScope.launch {
-                try {
-                    val response = apiCliente.getAllClientes() // Asegúrate de que este endpoint te devuelva todos los clientes
-                    if (response.isSuccessful && response.body() != null) {
-                        val clientes = response.body()!!
-                        val dniList = clientes.map { it.dni } // Extraer la lista de DNIs
-                        val adapter = ArrayAdapter(this@AgregarAnimalesActivity, android.R.layout.simple_dropdown_item_1line, dniList)
-                        spnListarDniClientesAnimales.setAdapter(adapter)
-
-                        // Manejar la selección del DNI
-                        spnListarDniClientesAnimales.setOnItemClickListener { _, _, position, _ ->
-                            val dniSeleccionado = adapter.getItem(position) ?: ""
-                            cargarNombreCliente(dniSeleccionado)
-                        }
-                    } else {
-                        Toast.makeText(this@AgregarAnimalesActivity, "Error al cargar clientes", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(this@AgregarAnimalesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        private fun cargarNombreCliente(dni: String) {
-            val apiCliente = ApiUtils.getApiCliente()
-            lifecycleScope.launch {
-                try {
-                    val response = apiCliente.getClienteByDni(dni)
-                    if (response.isSuccessful && response.body() != null) {
-                        val cliente = response.body()!!
-                        txtNombreCargarDatos.text = "${cliente.nombres} ${cliente.apellidos}" // Mostrar nombres y apellidos
-                    } else {
-                        txtNombreCargarDatos.text = "Cliente no encontrado"
-                    }
-                } catch (e: Exception) {
-                    txtNombreCargarDatos.text = "Error al cargar datos"
-                }
-            }
-        }
-
-
 
         fun regresarAnimal(){
             var intent= Intent(this,ListaAnimalesActivity::class.java)

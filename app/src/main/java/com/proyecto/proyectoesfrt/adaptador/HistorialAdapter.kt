@@ -22,7 +22,7 @@ class HistorialAdapter(private val context: Context, private val lista: MutableL
             itemView.setOnClickListener {
                 val historial = lista[adapterPosition]
                 val intent = Intent(context, HistorialDetalleActivity::class.java).apply {
-                    putExtra("historial", historial) // Pasar el objeto serializable
+                    putExtra("historial", historial)  // Asegúrate de que el objeto está pasando correctamente
                 }
                 context.startActivity(intent)
             }
@@ -37,9 +37,9 @@ class HistorialAdapter(private val context: Context, private val lista: MutableL
     override fun onBindViewHolder(holder: HistorialViewHolder, position: Int) {
         val historial = lista[position]
 
-        // Obtener los valores relevantes de los objetos
-        val nombreAnimal = historial.animal.nombre // Asegúrate de que "nombre" esté en la clase `Animal`
-        val nombreCliente = "${historial.cliente.nombres} ${historial.cliente.apellidos}" // Nombre completo del cliente
+        // Manejo de valores nulos: Se asegura de que no haya nulls
+        val nombreAnimal = historial.animal?.nombre ?: "Nombre no disponible"  // Valor predeterminado si es null
+        val nombreCliente = "${historial.cliente?.nombres ?: "Nombre no disponible"} ${historial.cliente?.apellidos ?: "Apellido no disponible"}"  // Valor predeterminado si es null
 
         // Asignar los valores a los TextView
         holder.tvApiNombreAnimalItem.text = nombreAnimal

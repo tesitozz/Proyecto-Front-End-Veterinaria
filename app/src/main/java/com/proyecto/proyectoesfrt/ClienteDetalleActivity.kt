@@ -159,7 +159,7 @@ class ClienteDetalleActivity : AppCompatActivity() {
                                 Toast.makeText(this@ClienteDetalleActivity, "Cliente eliminado exitosamente", Toast.LENGTH_SHORT).show()
 
                                 // Redirigir a la actividad ListaAnimalesActivity después de eliminar el cliente
-                                val intent = Intent(this@ClienteDetalleActivity, ListaAnimalesActivity::class.java)
+                                val intent = Intent(this@ClienteDetalleActivity, ListaClientesActivity::class.java)
                                 startActivity(intent) // Iniciar la actividad
                                 finish() // Opcional: Terminar esta actividad si no necesitas regresar a ella
                             } else {

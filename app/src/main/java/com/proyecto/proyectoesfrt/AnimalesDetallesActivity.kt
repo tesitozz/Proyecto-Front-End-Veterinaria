@@ -32,12 +32,7 @@ package com.proyecto.proyectoesfrt
                 private lateinit var btnRegresarAnimalAgregar:Button
 
 
-                //Clientes
-
-                private lateinit var spnListarDniClientesAnimalesDetalles:AutoCompleteTextView
-                private lateinit var txtNombreCargarDatosDetalles:TextView
-
-                //Apis
+                //Api
                 private lateinit var api: ApiServiceAnimal
 
                 override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,10 +55,6 @@ package com.proyecto.proyectoesfrt
                     spnTipoAnimalDetalles = findViewById(R.id.spnTipoAnimalDetalles)
                     spnRazaAnimalDetalles = findViewById(R.id.spnRazaAnimalDetalles)
 
-                    //clientes
-                    spnListarDniClientesAnimalesDetalles = findViewById(R.id.spnListarDniClientesAnimalesDetalles)
-                    txtNombreCargarDatosDetalles = findViewById(R.id.txtNombreCargarDatosDetalles)
-
                     btnRegistrarAnimalModificar = findViewById(R.id.btnRegistrarAnimalModificar)
                     btnRegistrarAnimalBorrar = findViewById(R.id.btnRegistrarAnimalBorrar)
                     btnRegresarAnimalAgregar = findViewById(R.id.btnRegresarAnimalAgregar)
@@ -72,9 +63,6 @@ package com.proyecto.proyectoesfrt
 
                     // Inicializar API
                     api = ApiUtils.getApiAnimal()
-
-                    // Inicializar API para Cliente
-                    val apiCliente = ApiUtils.getApiCliente()
 
 
                     // Obtener el ID del animal
@@ -94,23 +82,22 @@ package com.proyecto.proyectoesfrt
                 private fun cargarDatosAnimal(animalId: Long) {
                     lifecycleScope.launch {
                         try {
-                            val response = api.getAnimalById(animalId) // Método en tu API para obtener el animal por ID
-                            if (response.isSuccessful && response.body() != null) {
-                                val animal = response.body() // Obtenemos el animal directamente desde la respuesta de la API
-                                animal?.let {
-                                    // Asigna los datos a las vistas
-                                    txtNombreAnimalDetalles.text = it.nombre
-                                    txtEdadAnimalDetalle.text = it.edad.toString()
-                                    txtPesoAnimalDetalles.text = it.peso.toString()
-                                    spnColorAnimalDetalles.setText(it.color ?: "", false)
-                                    spnTipoAnimalDetalles.setText(it.tipo, false)
-                                    spnRazaAnimalDetalles.setText(it.raza ?: "", false)
+                            val response = api.getAnimalById(animalId)
+                            if (response.isSuccessful) {
+                                val animal = response.body()
+                                if (animal != null) {
+                                    // Rellenar los campos con los datos del animal
+                                    txtNombreAnimalDetalles.text = animal.nombre
+                                    txtEdadAnimalDetalle.text = animal.edad.toString()
+                                    txtPesoAnimalDetalles.text = animal.peso.toString()
 
-                                    spnListarDniClientesAnimalesDetalles.setText(it.cliente.dni, false)
-                                    txtNombreCargarDatosDetalles.text = "${it.cliente.nombres} ${it.cliente.apellidos}"
+                                    // Establecer el valor de los AutoCompleteTextView
+                                    spnColorAnimalDetalles.setText(animal.color ?: "", false)
+                                    spnTipoAnimalDetalles.setText(animal.tipo ?: "", false)
+                                    spnRazaAnimalDetalles.setText(animal.raza ?: "", false)
                                 }
                             } else {
-                                Toast.makeText(this@AnimalesDetallesActivity, "Error al cargar datos del animal", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@AnimalesDetallesActivity, "Error al cargar los detalles del animal", Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
                             Toast.makeText(this@AnimalesDetallesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -120,63 +107,44 @@ package com.proyecto.proyectoesfrt
 
 
 
+
+
                 private fun modificarAnimal(animalId: Long) {
+                    // Obtener los valores de los campos
                     val nombre = txtNombreAnimalDetalles.text.toString()
-                    val tipo = spnTipoAnimalDetalles.text.toString()
+                    val edad = txtEdadAnimalDetalle.text.toString().toIntOrNull()
+                    val peso = txtPesoAnimalDetalles.text.toString().toDoubleOrNull()
                     val color = spnColorAnimalDetalles.text.toString()
+                    val tipo = spnTipoAnimalDetalles.text.toString()
                     val raza = spnRazaAnimalDetalles.text.toString()
-                    val edadText = txtEdadAnimalDetalle.text.toString()
-                    val pesoText = txtPesoAnimalDetalles.text.toString()
 
-                    // Validaciones básicas
-                    if (nombre.isEmpty() || tipo.isEmpty() || edadText.isEmpty() || pesoText.isEmpty()) {
-                        Toast.makeText(this, "Por favor, completa todos los campos obligatorios", Toast.LENGTH_SHORT).show()
+                    // Validar que los campos no estén vacíos
+                    if (nombre.isEmpty() || edad == null || peso == null || color.isEmpty() || tipo.isEmpty()) {
+                        Toast.makeText(this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
                         return
                     }
 
-                    val edad = edadText.toIntOrNull()
-                    val peso = pesoText.toDoubleOrNull()
+                    // Crear un objeto Animal con los datos modificados
+                    val animal = Animal(
+                        id = animalId,
+                        nombre = nombre,
+                        tipo = tipo,
+                        genero = "", // Agregar campo de género si es necesario
+                        edad = edad,
+                        peso = peso,
+                        raza = raza,
+                        color = color
+                    )
 
-                    if (edad == null || peso == null) {
-                        Toast.makeText(this, "Edad y peso deben ser valores válidos", Toast.LENGTH_SHORT).show()
-                        return
-                    }
-
-                    // Obtener el DNI del cliente seleccionado
-                    val dniCliente = spnListarDniClientesAnimalesDetalles.text.toString()
-
-                    // Aquí necesitas hacer una llamada a la API para obtener el cliente por DNI
+                    // Realizar la solicitud PUT para modificar el animal
                     lifecycleScope.launch {
                         try {
-                            // Obtén el cliente usando su DNI
-                            val responseCliente = ApiUtils.getApiCliente().getClienteByDni(dniCliente)
-
-                            if (responseCliente.isSuccessful && responseCliente.body() != null) {
-                                val cliente = responseCliente.body()!!
-
-                                // Crear el objeto Animal con el cliente completo
-                                val animal = Animal(
-                                    id = animalId,
-                                    nombre = nombre,
-                                    tipo = tipo,
-                                    genero = "", // Puedes añadir un campo si es necesario
-                                    edad = edad,
-                                    peso = peso,
-                                    raza = if (raza.isEmpty()) null else raza,
-                                    color = if (color.isEmpty()) null else color,
-                                    cliente = cliente  // Aquí asignas el cliente completo
-                                )
-
-                                // Llamada a la API para actualizar el animal
-                                val updateResponse = api.updateAnimal(animal)  // Ya no es necesario pasar el animalId como parámetro, ya que está en el objeto Animal
-                                if (updateResponse.isSuccessful) {
-                                    Toast.makeText(this@AnimalesDetallesActivity, "Animal actualizado con éxito", Toast.LENGTH_SHORT).show()
-                                    volverListado()
-                                } else {
-                                    Toast.makeText(this@AnimalesDetallesActivity, "Error al actualizar el animal", Toast.LENGTH_SHORT).show()
-                                }
+                            val response = api.updateAnimal(animal)
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@AnimalesDetallesActivity, "Animal modificado con éxito", Toast.LENGTH_SHORT).show()
+                                volverListado() // Regresar a la lista de animales
                             } else {
-                                Toast.makeText(this@AnimalesDetallesActivity, "Cliente no encontrado", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@AnimalesDetallesActivity, "Error al modificar el animal", Toast.LENGTH_SHORT).show()
                             }
                         } catch (e: Exception) {
                             Toast.makeText(this@AnimalesDetallesActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -197,7 +165,7 @@ package com.proyecto.proyectoesfrt
                                 val response = api.deleteAnimal(animalId) // Método para eliminar el animal
                                 if (response.isSuccessful) {
                                     Toast.makeText(this@AnimalesDetallesActivity, "Animal eliminado con éxito", Toast.LENGTH_SHORT).show()
-                                    volverListado()
+                                    volverListado() // Regresar a la lista de animales
                                 } else {
                                     Toast.makeText(this@AnimalesDetallesActivity, "Error al eliminar el animal", Toast.LENGTH_SHORT).show()
                                 }
@@ -217,21 +185,6 @@ package com.proyecto.proyectoesfrt
                     startActivity(intent)
                 }
 
-                private fun cargarOpcionesSpinners() {
-                    // Cargar los valores desde strings.xml
-                    val colores = resources.getStringArray(R.array.label_color)
-                    val tipos = resources.getStringArray(R.array.tipoAnimal)
-                    val razas = resources.getStringArray(R.array.tipoRazaAnimal)
 
-                    // Crear un adaptador para cada AutoCompleteTextView
-                    val colorAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, colores)
-                    spnColorAnimalDetalles.setAdapter(colorAdapter)
-
-                    val tipoAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tipos)
-                    spnTipoAnimalDetalles.setAdapter(tipoAdapter)
-
-                    val razaAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, razas)
-                    spnRazaAnimalDetalles.setAdapter(razaAdapter)
-                }
 
             }

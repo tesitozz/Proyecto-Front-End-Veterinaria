@@ -25,16 +25,13 @@ class MedicoAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val doctor = doctoresList[position]
                     val intent = Intent(context, DoctorDetalleActivity::class.java).apply {
-                        putExtra("id", doctor.id)
-                        putExtra("nombres", doctor.nombres)
-                        putExtra("apellidos", doctor.apellidos)
-                        putExtra("dni", doctor.dni)
-                        putExtra("especialidad", doctor.especialidad)
+                        putExtra("doctorId", doctor.id)  // Pasamos solo el ID
                     }
                     context.startActivity(intent)
                 }
             }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DoctorViewHolder {

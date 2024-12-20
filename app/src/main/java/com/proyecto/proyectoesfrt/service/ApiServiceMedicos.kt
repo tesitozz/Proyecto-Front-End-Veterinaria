@@ -20,18 +20,6 @@ interface ApiServiceMedicos {
     @PUT("/api/medicos/actualizar")
     suspend fun updateMedico(@Body medico: Medico): Response<Medico>
 
-    @PUT("/api/medicos/actualizar-nombres-de/{id}")
-    suspend fun updateMedicoNombres(@Path("id") id: Long, @Body nombres: String): Response<Medico>
-
-    @PUT("/api/medicos/actualizar-apellidos-de/{id}")
-    suspend fun updateMedicoApellidos(@Path("id") id: Long, @Body apellidos: String): Response<Medico>
-
-    @PUT("/api/medicos/actualizar-especialidad-de/{id}")
-    suspend fun updateMedicoEspecialidad(@Path("id") id: Long, @Body especialidad: String): Response<Medico>
-
-    @PUT("/api/medicos/actualizar-dni-de/{id}")
-    suspend fun updateMedicoDni(@Path("id") id: Long, @Body dni: String): Response<Medico>
-
     @GET("/api/medicos/buscar-por-id/{id}")
     suspend fun getMedicoById(@Path("id") id: Long): Response<Medico>
 
@@ -41,12 +29,5 @@ interface ApiServiceMedicos {
     @GET("/api/medicos/buscar-por-dni/{dni}")
     suspend fun getMedicoByDni(@Path("dni") dni: String): Response<Medico>
 
-    @GET("/api/medicos/buscar-por-nombres/{nombres}")
-    suspend fun getMedicosByNombres(@Path("nombres") nombres: String): Response<List<Medico>>
 
-    @GET("/api/medicos/buscar-por-apellidos/{apellidos}")
-    suspend fun getMedicosByApellidos(@Path("apellidos") apellidos: String): Response<List<Medico>>
-
-    @GET("/api/medicos/buscar-por-especialidad/{especialidad}")
-    suspend fun getMedicosByEspecialidad(@Path("especialidad") especialidad: String): Response<List<Medico>>
 }

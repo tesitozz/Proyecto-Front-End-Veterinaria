@@ -71,7 +71,7 @@ class ListaAnimalesActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Supón que tienes un método en tu cliente Retrofit para obtener todos los animales
-                val response = RetrofitClient.apiService.getAllAnimales()  // Este método debe estar en tu cliente Retrofit
+                val response = RetrofitClient.apiService.getAllAnimals()  // Este método debe estar en tu cliente Retrofit
                 if (response.isSuccessful && response.body() != null) {
                     // Si la respuesta es exitosa, obtenemos la lista de animales
                     val animales = response.body()!!

@@ -55,6 +55,7 @@
                         android:id="@+id/txtFechaRegistoHistorialDetalles"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:hint="Seleccionar fecha"
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,9 +72,78 @@
                         android:id="@+id/txtHoraRegistroHistorialDetalles"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:hint="Seleccionar hora"
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelDiagnostico"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtDiagnosticoHistorialDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdasd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelTratamientoHistorial"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtTratamientoHistorialDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdsadd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/labelVacunasAplicadas"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtVacunasAplicadasHistorialDetalleDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/asdasds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/laveObservacionesAnimal"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/account">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtObservacionesHistorialDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
             <!-- Primer campo -->
             <TextView
                 android:id="@+id/textView3"
@@ -309,7 +379,7 @@
                         android:layout_width="371dp"
                         android:layout_height="52dp"
                         android:inputType="none"
-                        app:simpleItems="@array/item_medico_historial" />
+                        app:simpleItems="@array/item_medico_dni_historial" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

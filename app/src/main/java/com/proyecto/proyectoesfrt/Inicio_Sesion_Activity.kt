@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.proyecto.proyectoesfrt.api.RetrofitClient
+import com.proyecto.proyectoesfrt.entidad.Administrador
+import com.proyecto.proyectoesfrt.entidad.LoginRequest
 import retrofit2.Call
 import retrofit2.Response
 
@@ -33,12 +35,59 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
         txtUsuarioLogin=findViewById(R.id.txtUsuarioLogin)
         txtClave=findViewById(R.id.txtClave)
 
-        ///btnUsuarioLogin.setOnClickListener { logearse() }
+        btnUsuarioLogin.setOnClickListener { logearse() }
 
     }
+    fun logearse() {
+        // Obtener los valores ingresados por el usuario
+        val usuario = txtUsuarioLogin.text.toString().trim()
+        val password = txtClave.text.toString().trim()
 
-    //FUNCION LOGIN - INICIO SESIÓN
+        // Validar que los campos no estén vacíos
+        when {
+            usuario.isEmpty() -> {
+                txtUsuarioLogin.error = "Por favor, ingrese su usuario"
+                txtUsuarioLogin.requestFocus()
+            }
+            password.isEmpty() -> {
+                txtClave.error = "Por favor, ingrese su contraseña"
+                txtClave.requestFocus()
+            }
+            else -> {
+                // Crear el objeto LoginRequest
+                val loginRequest = LoginRequest(usuario, password)
 
+                // Llamar al servicio de login
+                val apiService = RetrofitClient.apiLogeoUsuario
+                val call = apiService.login(loginRequest)
+
+                call.enqueue(object : retrofit2.Callback<Administrador> {
+                    override fun onResponse(call: Call<Administrador>, response: Response<Administrador>) {
+                        if (response.isSuccessful) {
+                            // Login exitoso
+                            val administrador = response.body()
+                            Log.d("Login", "Usuario autenticado: ${administrador?.usuario}")
+
+                            // Redirigir a la siguiente actividad
+                            val intent = Intent(this@Inicio_Sesion_Activity, MainActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            // Manejar errores de autenticación
+                            mostrarError("Credenciales inválidas. Por favor, intente de nuevo.")
+                            Log.e("Login", "Error de autenticación: ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Administrador>, t: Throwable) {
+                        // Manejar errores de conexión u otros problemas
+                        mostrarError("Error al conectar con el servidor: ${t.message}")
+                        Log.e("Login", "Error de conexión", t)
+                    }
+                })
+            }
+        }
+    }
 
 
     private fun mostrarError(mensaje: String) {
