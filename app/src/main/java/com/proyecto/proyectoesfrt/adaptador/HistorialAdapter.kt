@@ -22,7 +22,8 @@ class HistorialAdapter(private val context: Context, private val lista: MutableL
             itemView.setOnClickListener {
                 val historial = lista[adapterPosition]
                 val intent = Intent(context, HistorialDetalleActivity::class.java).apply {
-                    putExtra("historial", historial)  // Asegúrate de que el objeto está pasando correctamente
+                    // Usamos putExtra para pasar el objeto HistorialClinica como Parcelable
+                    putExtra("historial", historial)
                 }
                 context.startActivity(intent)
             }

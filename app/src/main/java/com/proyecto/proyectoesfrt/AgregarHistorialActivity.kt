@@ -2,18 +2,13 @@ package com.proyecto.proyectoesfrt
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.appproyecto.utils.ApiUtils
 import com.google.android.material.textfield.TextInputEditText
@@ -26,11 +21,6 @@ import com.proyecto.proyectoesfrt.service.ApiServiceAnimal
 import com.proyecto.proyectoesfrt.service.ApiServiceCliente
 import com.proyecto.proyectoesfrt.service.ApiServiceMedicos
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Response
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import javax.security.auth.callback.Callback
 
@@ -83,6 +73,7 @@ class AgregarHistorialActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.historial_agregar_main)
+
 
         // Inicialización de vistas
         txtFechaRegistoHistorial = findViewById(R.id.txtFechaRegistoHistorial)

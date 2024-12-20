@@ -11,9 +11,9 @@ data class HistorialClinica(
     val tratamiento: String? = null,
     val vacunasAplicadas: String? = null,
     val observaciones: String? = null,
-    val animal: Animal?,           // Cambié a Animal? porque puede ser null
-    val cliente: Cliente?,         // Cambié a Cliente? porque puede ser null
-    val medico: Medico?            // Cambié a Medico? porque puede ser null
+    var animal: Animal?,           // Cambié a Animal? porque puede ser null
+    var cliente: Cliente?,         // Cambié a Cliente? porque puede ser null
+    var medico: Medico?            // Cambié a Medico? porque puede ser null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readValue(Long::class.java.classLoader) as Long?,

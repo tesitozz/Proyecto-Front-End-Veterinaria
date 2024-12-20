@@ -278,7 +278,7 @@
 
                 <AutoCompleteTextView
                     android:id="@+id/spnAnimalRegistrarModificarDetalles"
-                    android:layout_width="371dp"
+                    android:layout_width="391dp"
                     android:layout_height="52dp"
                     android:inputType="none"
                     app:simpleItems="@array/item_animal_historial" />
@@ -358,7 +358,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:text="Doctor"
+                android:text="Medico"
                 android:textSize="20sp" />
 
             <LinearLayout
@@ -372,15 +372,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:hint="@string/labelDni">
+                    android:hint="@string/labelDniMedico">
 
                     <AutoCompleteTextView
-                        android:id="@+id/spnDoctorDetalleModificar"
-                        android:layout_width="371dp"
+                        android:id="@+id/spnMedicoHistorialDetalle"
+                        android:layout_width="379dp"
                         android:layout_height="52dp"
                         android:inputType="none"
                         app:simpleItems="@array/item_medico_dni_historial" />
 
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:endIconMode="clear_text"
+
+                    app:startIconDrawable="@drawable/account">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtNombresyApellidosMedicoHistorialDetalle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -388,23 +403,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="@string/labelNombreDoctor"
+                    android:hint="@string/labelCorreo"
                     app:endIconMode="clear_text"
-
                     app:startIconDrawable="@drawable/account">
-
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/txtApellidosDoctorDetalles"
+                        android:id="@+id/txtCorreoMedicoHistorialDetalle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="25dp"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textField2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/labelTelefonoMed"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/account">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txtTelefonoMedicoHistorialDetalle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
                         android:textSize="12sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
             </LinearLayout>
-
-
 
 
 

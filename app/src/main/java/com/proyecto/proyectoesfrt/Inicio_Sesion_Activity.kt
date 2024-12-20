@@ -38,6 +38,8 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
         btnUsuarioLogin.setOnClickListener { logearse() }
 
     }
+
+
     fun logearse() {
         // Obtener los valores ingresados por el usuario
         val usuario = txtUsuarioLogin.text.toString().trim()
@@ -88,6 +90,7 @@ class Inicio_Sesion_Activity : AppCompatActivity() {
             }
         }
     }
+
 
 
     private fun mostrarError(mensaje: String) {
